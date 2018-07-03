@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Theme.AppCompat.NoActionBar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/gradient_background_blue"
+    tools:context=".LoginActivity">
+
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_white"
+        android:layout_gravity="center_horizontal"/>
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        style="@style/Background30Opacity"
+        android:layout_marginBottom="16dp"
+        android:text="Seu e-mail" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Background30Opacity"
+        android:layout_marginBottom="16dp"
+        android:text="Password"
+        android:inputType="textPassword" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/clear"
+        android:checked="true"
+        android:layout_marginBottom="32dp"
+        android:layout_marginHorizontal="16dp"
+        android:text="Entrar como motorista" />
+
+    <Button
+        android:id="@+id/btnEntrar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        style="@style/ButtonAccent"
+        android:text="Entrar" />
+
+    <Button
+        android:id="@+id/btnCriar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:textColor="@color/clear"
+        android:text="Criar conta" />
+
+
+</LinearLayout>
