@@ -12,6 +12,10 @@
         <item name="android:background">@drawable/radius_shape_accent</item>
         <item name="android:textColor">@color/clear</item>
     </style>
+    <style name="ButtonPrimary">
+        <item name="android:background">@drawable/radius_shape_primary</item>
+        <item name="android:textColor">@color/clear</item>
+    </style>
     <style name="Background30Opacity">
         <item name="android:background">@drawable/radius_shape_30opacity</item>
         <item name="android:textColor">@color/clear</item>

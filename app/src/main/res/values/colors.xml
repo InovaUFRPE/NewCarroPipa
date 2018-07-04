@@ -5,6 +5,7 @@
     <color name="accent">#FF7F11</color>
     <color name="dark">#1B1725</color>
     <color name="dark30">#4C1B1725</color>
+    <color name="dark5">#0D1B1725</color>
     <color name="clear">#F7F7FF</color>
     <color name="success">#2DD881</color>
     <color name="danger">#EE6352</color>
