@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Theme.AppCompat.NoActionBar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -23,7 +22,7 @@
         android:inputType="textEmailAddress"
         style="@style/Background30Opacity"
         android:layout_marginBottom="16dp"
-        android:text="Seu e-mail" />
+        android:hint="Seu e-mail" />
 
     <EditText
         android:id="@+id/editText2"
@@ -31,7 +30,7 @@
         android:layout_height="wrap_content"
         style="@style/Background30Opacity"
         android:layout_marginBottom="16dp"
-        android:text="Password"
+        android:hint="Password"
         android:inputType="textPassword" />
 
     <Switch
