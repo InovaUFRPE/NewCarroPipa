@@ -17,7 +17,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        setContentView(R.layout.fisica_activity_home);
+        setContentView(R.layout.activity_fisica_home);
         lySeekBarLitros = findViewById(R.id.lySeekBarLitros);
         lyPedirAgua = findViewById(R.id.lyPedirAgua);
         btnShowSeekBar = findViewById(R.id.btnShowSeekBar);
