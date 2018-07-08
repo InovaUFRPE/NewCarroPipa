@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/gradient_background_blue"
+    tools:context=".LoginActivity">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="254dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/logo_white" />
+
+                <Switch
+                    android:id="@+id/switch1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="32dp"
+                    android:layout_marginTop="15dp"
+                    android:checked="false"
+                    android:text="Se cadastrar como motorista"
+                    android:textColor="@color/clear"
+                    android:textSize="17sp" />
+
+                <EditText
+                        android:id="@+id/editTextNome"
+                        style="@style/Background30Opacity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Nome"
+                        android:inputType="text" />
+
+                <EditText
+                    android:id="@+id/editTextCpf"
+                    style="@style/Background30Opacity"
+                    android:layout_width="match_parent"
+                    android:maxLength="14"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="CPF"
+                    android:inputType="number" />
+
+                <EditText
+                    android:id="@+id/editTextTelefone"
+                    style="@style/Background30Opacity"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Telefone"
+                    android:inputType="number" />
+
+                <EditText
+                    android:id="@+id/editTextEmail"
+                    style="@style/Background30Opacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="E-mail"
+                    android:inputType="textEmailAddress" />
+
+                <EditText
+                    android:id="@+id/editTextSenha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Background30Opacity"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Senha"
+                    android:inputType="textPassword" />
+
+                <EditText
+                    android:id="@+id/editTextConfirmacao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Background30Opacity"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Confirmação de senha"
+                    android:inputType="textPassword" />
+
+                <Button
+                    android:id="@+id/btnCadastrar"
+                    style="@style/ButtonAccent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Confirmar" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

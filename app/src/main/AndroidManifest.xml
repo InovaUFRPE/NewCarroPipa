@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeFisicaActivity" />
-        <activity android:name=".HomeCaminhoneiroActivity"></activity>
+        <activity android:name=".HomeCaminhoneiroActivity" />
+        <activity android:name=".CadastroUsuarioActivity"></activity>
     </application>
 
 </manifest>
