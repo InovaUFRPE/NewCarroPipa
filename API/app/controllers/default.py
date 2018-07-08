@@ -77,8 +77,8 @@ def usuario(id_usuario):
 
 '''----------------------------Pessoa--------------------------------'''
 
-def pessoa_add(nomerazaosocial,telefone,id_usuario,tipopessoa,cpfcnpj):
-    i = Pessoa(nomerazaosocial,telefone,id_usuario,tipopessoa,cpfcnpj)
+def pessoa_add(nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj):
+    i = Pessoa(nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj)
     db.session.add(i)
     db.session.commit()
     return "Pessoa \"" + i.nomerazaosocial + "\" incluida com sucesso!"
@@ -93,9 +93,10 @@ def pessoa_get(id_pessoa):
     g = Pessoa.query.get(id_pessoa)
     return "Pessoa \"" + g.nomerazaosocial
 
-def pessoa_update(id_pessoa,nomerazaosocial,telefone,id_usuario,tipopessoa,cpfcnpj):
+def pessoa_update(id_pessoa,nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj):
     u = Pessoa.query.get(id_pessoa)
     u.nomerazaosocial = nomerazaosocial
+    u.foto = foto
     u.telefone = telefone
     u.id_usuario = id_usuario
     u.tipopessoa = tipopessoa
@@ -109,7 +110,7 @@ def pessoa_update(id_pessoa,nomerazaosocial,telefone,id_usuario,tipopessoa,cpfcn
 def pessoa(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        if pessoa_add(some_json['nomerazaosocial'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj']):
+        if pessoa_add(some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj']):
             return jsonify({'sucesso':True}), 201
         return jsonify({'sucesso':False}), 400
 
@@ -122,12 +123,12 @@ def pessoa(id_pessoa):
     elif (request.method == 'GET'):
         result = pessoa_get(id_pessoa)
         if result:
-            return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa'],'nomerazaosocial':result['nomerazaosocial'],'telefone':result['telefone'],'tipopessoa':result['tipopessoa'],'cpfcnpj':result['cpfcnpj']})
+            return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa'],'nomerazaosocial':result['nomerazaosocial'],'foto':result['foto'],'telefone':result['telefone'],'tipopessoa':result['tipopessoa'],'cpfcnpj':result['cpfcnpj']})
         return jsonify({'sucesso':False})
     
     elif (request.method == 'PUT'):
         some_json = request.get_json()
-        if pessoa_update(some_json['id_pessoa'],some_json['nomerazaosocial'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj']):
+        if pessoa_update(some_json['id_pessoa'],some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj']):
             return jsonify({'sucesso':True}), 200
         return jsonify({'sucesso':False}), 400
 

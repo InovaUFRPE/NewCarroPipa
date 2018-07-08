@@ -12,5 +12,5 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-from app.models import ModelUsuario, ModelPessoa, ModelEndereco, ModelEmpresa, ModelCliente, ModelCaminhao, ModelMotorista, ModelRanking, ModelFormaPagto, ModelPagamento 
+from app.models import ModelUsuario, ModelPessoa, ModelEndereco, ModelCliente, ModelEmpresa, ModelCaminhao, ModelMotorista, ModelRanking, ModelPedido, ModelFormaPagto, ModelPagamento 
 from app.controllers import default

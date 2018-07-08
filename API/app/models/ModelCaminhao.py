@@ -7,7 +7,7 @@ class Caminhao(db.Model):
     placa = db.Column(db.Integer)
     capacidade = db.Column(db.String)
     modelo = db.Column(db.String)
-    id_pessoa_emp = db.Column(db.Integer, db.ForeignKey('empresa.id_pessoa_emp'))
+    id_pessoa_emp = db.Column(db.Integer, db.ForeignKey('empresa.id_pessoa'))
 
     empresa = db.relationship('Empresa', foreign_keys=id_pessoa_emp)
 
