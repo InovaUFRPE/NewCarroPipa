@@ -66,7 +66,7 @@ def usuario(id_usuario):
 
     elif (request.method == 'DELETE'):
         some_json = request.get_json()
-        result = usuario_delete(some_json['id_usuario'])
+        result = usuario_delete(id_usuario)
         if result['sucesso']:
             return jsonify(result), 202
         return jsonify(result), 400
@@ -133,7 +133,7 @@ def pessoa(id_pessoa):
 
     elif (request.method == 'DELETE'):
         some_json = request.get_json()
-        result = pessoa_delete(some_json['id_pessoa'])
+        result = pessoa_delete(id_pessoa)
         if result['sucesso']:
             return jsonify(result), 202
         return jsonify(result), 400
@@ -200,7 +200,7 @@ def endereco(id_pessoa):
 
     elif (request.method == 'DELETE'):
         some_json = request.get_json()
-        result = endereco_delete(some_json['id_pessoa'])
+        result = endereco_delete(id_pessoa)
         if result['sucesso']:
             return jsonify(result), 202
         return jsonify(result), 400
@@ -218,6 +218,91 @@ def endereco(id_pessoa):
             return jsonify(result), 200
         return jsonify(result), 400
 
+
+'''----------------------------Cliente--------------------------------'''
+
+def cliente_add(email,senha,nomerazaosocial,foto,telefone,tipopessoa,cpfcnpj,logradouro,complemento,bairro,cidade,cep,uf):
+    h = Usuario.query.filter(Usuario.email == email).first()
+    if h == None:
+        h = Usuario(email, senha)
+        db.session.add(h)
+        #db.session.commit()
+    
+    i = Pessoa.query.filter(Pessoa.id_usuario == h.id_usuario).first()
+    if i == None:
+        i = Pessoa(nomerazaosocial,foto,telefone,h.id_usuario,tipopessoa,cpfcnpj)
+        db.session.add(i)
+        #db.session.commit()
+
+    j = Endereco.query.filter(Endereco.id_pessoa == i.id_pessoa).first()
+    if j == None:
+        j = Endereco(i.id_pessoa,logradouro,complemento,bairro,cidade,cep,uf)
+        db.session.add(j)
+        #db.session.commit()
+    
+    k = Cliente.query.filter(Cliente.id_pessoa == i.id_pessoa).first()
+    if k == None:
+        k = Cliente(i.id_pessoa)
+        db.session.add(k)
+        db.session.commit()
+    else:
+        return {'sucesso':False, 'mensagem':'cliente existente.'}
+
+    return {'sucesso':True, 'mensagem':'cliente cadastrado com sucesso.'}#,'id_pessoa':k.id_pessoa,'cpfcnpj':i.cpfcnpj,'email':h.email}
+
+def cliente_delete(id_pessoa):
+    d = Cliente.query.get(id_pessoa)
+    if d == None:
+        return {'sucesso':False, 'mensagem':'cliente não existe.'}
+
+    e = Pessoa.query.get(d.id_pessoa)
+    f = Usuario.query.get(e.id_usuario)
+    p = Endereco.query.get(d.id_pessoa)
+
+    db.session.delete(d)
+    #db.session.commit()
+    db.session.delete(p)
+    #db.session.commit()
+    db.session.delete(e)
+    #db.session.commit()
+    db.session.delete(f)
+    db.session.commit()
+
+    return {'sucesso':True, 'mensagem':'cliente removido com sucesso.'}
+
+def cliente_get(id_pessoa):
+    g = Cliente.query.get(id_pessoa)
+    if g == None:
+        return {'sucesso':False, 'mensagem':'cliente não existe.'}
+    h = Pessoa.query.get(str(g.id_pessoa))
+    i = Usuario.query.get(h.id_usuario)
+
+    return {'sucesso':True,'mensagem':'cliente retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email}
+
+@app.route("/cliente/<id_pessoa>",methods=['GET','DELETE'])
+@app.route("/cliente/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/cliente", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+def cliente(id_pessoa):
+    if (request.method == 'POST'):
+        some_json = request.get_json()
+        print('chamando result = cliente_ass')
+        result = cliente_add(some_json['email'],some_json['senha'],some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['tipopessoa'],some_json['cpfcnpj'],some_json['logradouro'],some_json['complemento'],some_json['bairro'],some_json['cidade'],some_json['cep'],some_json['uf'])
+        if result['sucesso']:
+            return jsonify(result), 201
+        return jsonify(result), 400
+
+    elif (request.method == 'DELETE'):
+        some_json = request.get_json()
+        result = cliente_delete(id_pessoa)
+        if result['sucesso']:
+            return jsonify(result), 202
+        return jsonify(result), 400
+
+    elif (request.method == 'GET'):
+        result = cliente_get(id_pessoa)
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
 
 '''----------------------------Empresa--------------------------------'''
 
@@ -255,47 +340,6 @@ def empresa(id_pessoa):
 
     elif (request.method == 'GET'):
         result = empresa_get(id_pessoa)
-        if result:
-            return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa']})
-        return jsonify({'sucesso':False})
-
-
-'''----------------------------Cliente--------------------------------'''
-
-def cliente_add(id_pessoa):
-    i = Cliente(id_pessoa)
-    db.session.add(i)
-    db.session.commit()
-    return "Cliente \"" + str(i.id_pessoa) + "\" incluida com sucesso!"
-
-def cliente_delete(id_pessoa):
-    d = Cliente.query.get(id_pessoa)
-    db.session.delete(d)
-    db.session.commit()
-    return "Cliente \"" + str(d.id_pessoa) + "\" excluída com sucesso!"
-
-def cliente_get(id_pessoa):
-    g = Cliente.query.get(id_pessoa)
-    return "Cliente \"" + str(g.id_pessoa)
-
-@app.route("/cliente/<id_pessoa>",methods=['GET'])
-@app.route("/cliente/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/cliente", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
-def cliente(id_pessoa):
-    if (request.method == 'POST'):
-        some_json = request.get_json()
-        if cliente_add(some_json['id_pessoa']):
-            return jsonify({'sucesso':True}), 201
-        return jsonify({'sucesso':False}), 400
-
-    elif (request.method == 'DELETE'):
-        some_json = request.get_json()
-        if cliente_delete(some_json['id_pessoa']):
-            return jsonify({'sucesso':True}), 202
-        return jsonify({'sucesso':False}), 400
-
-    elif (request.method == 'GET'):
-        result = cliente_get(id_pessoa)
         if result:
             return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa']})
         return jsonify({'sucesso':False})
