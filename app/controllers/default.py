@@ -31,10 +31,8 @@ def usuario_add(email,senha):
 
 def usuario_delete(id_usuario):
     d = Usuario.query.get(id_usuario)
-    
     if d == None:
         return {'sucesso':False, 'mensagem':'usuário não existe.'}
-    
     db.session.delete(d)
     db.session.commit()
     return {'sucesso':True, 'mensagem':'usuário removido com sucesso.'}
@@ -43,14 +41,12 @@ def usuario_get(id_usuario):
     g = Usuario.query.get(id_usuario)
     if g == None:
         return {'sucesso':False, 'mensagem':'usuario não existe.'}
-
     return {'sucesso':True,'mensagem':'usuário retornado com sucesso.','id_usuario':g.id_usuario,'email':g.email,'senha':g.senha}
 
 def usuario_update(id_usuario,email,senha):
     u = Usuario.query.get(id_usuario)
     if u == None:
         return {'sucesso':False, 'mensagem':'usuário não existe.'}
-
     u.email = email
     u.senha = senha
     db.session.commit()
@@ -95,20 +91,26 @@ def pessoa_add(nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj):
     i = Pessoa(nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj)
     db.session.add(i)
     db.session.commit()
-    return "Pessoa \"" + i.nomerazaosocial + "\" incluida com sucesso!"
+    return {'sucesso':True, 'mensagem':'pessoa cadastrado com sucesso.','id_pessoa':i.id_pessoa,'nomerazaosocial':i.nomerazaosocial,'foto':i.foto,'telefone':i.telefone,'id_usuario':i.id_usuario,'tipopessoa':i.tipopessoa,'cpfcnpj':i.cpfcnpj}
 
 def pessoa_delete(id_pessoa):
     d = Pessoa.query.get(id_pessoa)
+    if d == None:
+        return {'sucesso':False, 'mensagem':'pessoa não existe.'}
     db.session.delete(d)
     db.session.commit()
-    return "Pessoa \"" + d.nomerazaosocial + "\" excluída com sucesso!"
+    return {'sucesso':True, 'mensagem':'pessoa removida com sucesso.'}
 
 def pessoa_get(id_pessoa):
     g = Pessoa.query.get(id_pessoa)
-    return "Pessoa \"" + g.nomerazaosocial
+    if g == None:
+        return {'sucesso':False, 'mensagem':'pessoa não existe.'}
+    return {'sucesso':True,'mensagem':'pessoa retornada com sucesso.','id_pessoa':g.id_pessoa,'nomerazaosocial':g.nomerazaosocial,'foto':g.foto,'telefone':g.telefone,'id_usuario':g.id_usuario,'tipopessoa':g.tipopessoa,'cpfcnpj':g.cpfcnpj}
 
 def pessoa_update(id_pessoa,nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj):
     u = Pessoa.query.get(id_pessoa)
+    if u == None:
+        return {'sucesso':False, 'mensagem':'pessoa não existe.'}
     u.nomerazaosocial = nomerazaosocial
     u.foto = foto
     u.telefone = telefone
@@ -116,35 +118,38 @@ def pessoa_update(id_pessoa,nomerazaosocial,foto,telefone,id_usuario,tipopessoa,
     u.tipopessoa = tipopessoa
     u.cpfcnpj = cpfcnpj
     db.session.commit()
-    return "Pessoa \"" + u.nomerazaosocial + "\" alterada com sucesso!"
+    return {'sucesso':True,'mensagem':'pessoa atualizada com sucesso.','id_pessoa':u.id_pessoa,'nomerazaosocial':u.nomerazaosocial,'foto':u.foto,'telefone':u.telefone,'id_usuario':u.id_usuario,'tipopessoa':u.tipopessoa,'cpfcnpj':u.cpfcnpj}
 
-@app.route("/pessoa/<id_pessoa>",methods=['GET'])
+@app.route("/pessoa/<id_pessoa>",methods=['GET','DELETE'])
 @app.route("/pessoa/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 @app.route("/pessoa", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def pessoa(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        if pessoa_add(some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj']):
-            return jsonify({'sucesso':True}), 201
-        return jsonify({'sucesso':False}), 400
+        result = pessoa_add(some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj'])
+        if result['sucesso']:
+            return jsonify(result), 201
+        return jsonify(result), 400
 
     elif (request.method == 'DELETE'):
         some_json = request.get_json()
-        if pessoa_delete(some_json['id_pessoa']):
-            return jsonify({'sucesso':True}), 202
-        return jsonify({'sucesso':False}), 400
+        result = pessoa_delete(some_json['id_pessoa'])
+        if result['sucesso']:
+            return jsonify(result), 202
+        return jsonify(result), 400
 
     elif (request.method == 'GET'):
         result = pessoa_get(id_pessoa)
-        if result:
-            return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa'],'nomerazaosocial':result['nomerazaosocial'],'foto':result['foto'],'telefone':result['telefone'],'tipopessoa':result['tipopessoa'],'cpfcnpj':result['cpfcnpj']})
-        return jsonify({'sucesso':False})
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
     
     elif (request.method == 'PUT'):
         some_json = request.get_json()
-        if pessoa_update(some_json['id_pessoa'],some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj']):
-            return jsonify({'sucesso':True}), 200
-        return jsonify({'sucesso':False}), 400
+        result = pessoa_update(some_json['id_pessoa'],some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj'])
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
 
 
 '''----------------------------Endereco--------------------------------'''
@@ -153,20 +158,26 @@ def endereco_add(id_pessoa,logradouro,complemento,bairro,cidade,cep,uf):
     i = Endereco(id_pessoa,logradouro,complemento,bairro,cidade,cep,uf)
     db.session.add(i)
     db.session.commit()
-    return "Endereco \"" + i.logradouro + "\" incluido com sucesso!"
+    return {'sucesso':True, 'mensagem':'endereco cadastrado com sucesso.','id_pessoa':i.id_pessoa,'logradouro':i.logradouro,'complemento':i.complemento,'bairro':i.bairro,'cidade':i.cidade,'cep':i.cep,'uf':i.uf}
 
-def endereco_delete(id_endereco):
-    d = Endereco.query.get(id_endereco)
+def endereco_delete(id_pessoa):
+    d = Endereco.query.get(id_pessoa)
+    if d == None:
+        return {'sucesso':False, 'mensagem':'endereco não existe.'}
     db.session.delete(d)
     db.session.commit()
-    return "Endereco \"" + d.logradouro + "\" excluído com sucesso!"
+    return {'sucesso':True, 'mensagem':'endereco removido com sucesso.'}
 
-def endereco_get(id_endereco):
-    g = Endereco.query.get(id_endereco)
-    return "Endereco \"" + g.logradouro
+def endereco_get(id_pessoa):
+    g = Endereco.query.get(id_pessoa)
+    if g == None:
+        return {'sucesso':False, 'mensagem':'endereco não existe.'}
+    return {'sucesso':True,'mensagem':'endereco cadastrado com sucesso.','id_pessoa':g.id_pessoa,'logradouro':g.logradouro,'complemento':g.complemento,'bairro':g.bairro,'cidade':g.cidade,'cep':g.cep,'uf':g.uf}
 
 def endereco_update(id_pessoa,logradouro,complemento,bairro,cidade,cep,uf):
-    u = Endereco.query.get(id_endereco)
+    u = Endereco.query.get(id_pessoa)
+    if u == None:
+        return {'sucesso':False, 'mensagem':'endereco não existe.'}
     u.logradouro = logradouro
     u.complemento = complemento
     u.bairro = bairro
@@ -174,35 +185,38 @@ def endereco_update(id_pessoa,logradouro,complemento,bairro,cidade,cep,uf):
     u.cep = cep
     u.uf = uf
     db.session.commit()
-    return "Endereco \"" + u.logradouro + "\" alterado com sucesso!"
+    return {'sucesso':True,'mensagem':'endereco atualizado com sucesso.','id_pessoa':u.id_pessoa,'logradouro':u.logradouro,'complemento':u.complemento,'bairro':u.bairro,'cidade':u.cidade,'cep':u.cep,'uf':u.uf}
 
-@app.route("/endereco/<id_pessoa>",methods=['GET'])
+@app.route("/endereco/<id_pessoa>",methods=['GET','DELETE'])
 @app.route("/endereco/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 @app.route("/endereco", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def endereco(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        if endereco_add(some_json['id_pessoa'],some_json['lograouro'],some_json['complemento'],some_json['bairro'],some_json['cidade'],some_json['cep'],some_json['uf']):
-            return jsonify({'sucesso':True}), 201
-        return jsonify({'sucesso':False}), 400
+        result = endereco_add(some_json['id_pessoa'],some_json['logradouro'],some_json['complemento'],some_json['bairro'],some_json['cidade'],some_json['cep'],some_json['uf'])
+        if result['sucesso']:
+            return jsonify(result), 201
+        return jsonify(result), 400
 
     elif (request.method == 'DELETE'):
         some_json = request.get_json()
-        if endereco_delete(some_json['id_pessoa']):
-            return jsonify({'sucesso':True}), 202
-        return jsonify({'sucesso':False}), 400
+        result = endereco_delete(some_json['id_pessoa'])
+        if result['sucesso']:
+            return jsonify(result), 202
+        return jsonify(result), 400
 
     elif (request.method == 'GET'):
-        result = endereco_get(id_usuario)
-        if result:
-            return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa'],'lograouro':result['lograouro'],'complemento':result['complemento'],'bairro':result['bairro'],'cidade':result['cidade'],'cep':result['cep'],'uf':result['uf']})
-        return jsonify({'sucesso':False})
+        result = endereco_get(id_pessoa)
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
     
     elif (request.method == 'PUT'):
         some_json = request.get_json()
-        if endereco_update(some_json['id_pessoa'],some_json['lograouro'],some_json['complemento'],some_json['bairro'],some_json['cidade'],some_json['cep'],some_json['uf']):
-            return jsonify({'sucesso':True}), 200
-        return jsonify({'sucesso':False}), 400
+        result = endereco_update(some_json['id_pessoa'],some_json['logradouro'],some_json['complemento'],some_json['bairro'],some_json['cidade'],some_json['cep'],some_json['uf'])
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
 
 
 '''----------------------------Empresa--------------------------------'''
