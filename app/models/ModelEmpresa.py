@@ -7,8 +7,8 @@ class Empresa(db.Model):
 
     pessoa = db.relationship('Pessoa', foreign_keys=id_pessoa)
 
-    def __init__(self, id_pessoa_emp):
-        self.id_pessoa_emp = id_pessoa_emp
+    def __init__(self, id_pessoa):
+        self.id_pessoa = id_pessoa
 
     def __repr__(self):
-        return "<Empresa %r>" % self.id_pessoa_emp
+        return "<Empresa %r>" % self.id_pessoa

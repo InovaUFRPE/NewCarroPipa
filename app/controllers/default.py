@@ -285,7 +285,6 @@ def cliente_get(id_pessoa):
 def cliente(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        print('chamando result = cliente_ass')
         result = cliente_add(some_json['email'],some_json['senha'],some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['tipopessoa'],some_json['cpfcnpj'],some_json['logradouro'],some_json['complemento'],some_json['bairro'],some_json['cidade'],some_json['cep'],some_json['uf'])
         if result['sucesso']:
             return jsonify(result), 201
@@ -306,43 +305,87 @@ def cliente(id_pessoa):
 
 '''----------------------------Empresa--------------------------------'''
 
-def empresa_add(id_pessoa_emp):
-    i = Empresa(id_pessoa_emp)
-    db.session.add(i)
-    db.session.commit()
-    return "Empresa \"" + str(i.id_pessoa_emp) + "\" incluida com sucesso!"
+def empresa_add(email,senha,nomerazaosocial,foto,telefone,tipopessoa,cpfcnpj,logradouro,complemento,bairro,cidade,cep,uf):
+    h = Usuario.query.filter(Usuario.email == email).first()
+    if h == None:
+        h = Usuario(email, senha)
+        db.session.add(h)
+        #db.session.commit()
+    
+    i = Pessoa.query.filter(Pessoa.id_usuario == h.id_usuario).first()
+    if i == None:
+        i = Pessoa(nomerazaosocial,foto,telefone,h.id_usuario,tipopessoa,cpfcnpj)
+        db.session.add(i)
+        #db.session.commit()
 
-def empresa_delete(id_pessoa_emp):
-    d = Empresa.query.get(id_pessoa_emp)
+    j = Endereco.query.filter(Endereco.id_pessoa == i.id_pessoa).first()
+    if j == None:
+        j = Endereco(i.id_pessoa,logradouro,complemento,bairro,cidade,cep,uf)
+        db.session.add(j)
+        #db.session.commit()
+    
+    k = Empresa.query.filter(Empresa.id_pessoa == i.id_pessoa).first()
+    if k == None:
+        k = Empresa(i.id_pessoa)
+        db.session.add(k)
+        db.session.commit()
+    else:
+        return {'sucesso':False, 'mensagem':'empresa existente.'}
+
+    return {'sucesso':True, 'mensagem':'empresa cadastrada com sucesso.'}#,'id_pessoa':k.id_pessoa,'cpfcnpj':i.cpfcnpj,'email':h.email}
+
+def empresa_delete(id_pessoa):
+    d = Empresa.query.get(id_pessoa)
+    if d == None:
+        return {'sucesso':False, 'mensagem':'empresa não existe.'}
+
+    e = Pessoa.query.get(d.id_pessoa)
+    f = Usuario.query.get(e.id_usuario)
+    p = Endereco.query.get(d.id_pessoa)
+
     db.session.delete(d)
+    #db.session.commit()
+    db.session.delete(p)
+    #db.session.commit()
+    db.session.delete(e)
+    #db.session.commit()
+    db.session.delete(f)
     db.session.commit()
-    return "Empresa \"" + str(d.id_pessoa_emp) + "\" excluída com sucesso!"
 
-def empresa_get(id_pessoa_emp):
-    g = Empresa.query.get(id_pessoa_emp)
-    return "Empresa \"" + str(g.id_pessoa_emp)
+    return {'sucesso':True, 'mensagem':'empresa removida com sucesso.'}
 
-@app.route("/empresa/<id_pessoa>",methods=['GET'])
+def empresa(id_pessoa):
+    g = Empresa.query.get(id_pessoa)
+    if g == None:
+        return {'sucesso':False, 'mensagem':'empresa não existe.'}
+    h = Pessoa.query.get(str(g.id_pessoa))
+    i = Usuario.query.get(h.id_usuario)
+
+    return {'sucesso':True,'mensagem':'empresa retornada com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email}
+
+@app.route("/empresa/<id_pessoa>",methods=['GET','DELETE'])
 @app.route("/empresa/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 @app.route("/empresa", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def empresa(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        if empresa_add(some_json['id_pessoa']):
-            return jsonify({'sucesso':True}), 201
-        return jsonify({'sucesso':False}), 400
+        result = empresa_add(some_json['email'],some_json['senha'],some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['tipopessoa'],some_json['cpfcnpj'],some_json['logradouro'],some_json['complemento'],some_json['bairro'],some_json['cidade'],some_json['cep'],some_json['uf'])
+        if result['sucesso']:
+            return jsonify(result), 201
+        return jsonify(result), 400
 
     elif (request.method == 'DELETE'):
         some_json = request.get_json()
-        if empresa_delete(some_json['id_pessoa']):
-            return jsonify({'sucesso':True}), 202
-        return jsonify({'sucesso':False}), 400
+        result = empresa_delete(id_pessoa)
+        if result['sucesso']:
+            return jsonify(result), 202
+        return jsonify(result), 400
 
     elif (request.method == 'GET'):
-        result = empresa_get(id_pessoa)
-        if result:
-            return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa']})
-        return jsonify({'sucesso':False})
+        result = empresae_get(id_pessoa)
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
 
 
 '''----------------------------Caminhao--------------------------------'''
