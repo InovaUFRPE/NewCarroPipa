@@ -53,9 +53,9 @@ def usuario_update(id_usuario,email,senha):
 
     return {'sucesso':True,'mensagem':'usuário atualizado com sucesso.','id_usuario':u.id_usuario,'email':u.email,'senha':u.senha}
 
-@app.route("/usuario/<id_usuario>",methods=['GET','DELETE'])
-@app.route("/usuario/", defaults={'id_usuario': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/usuario", defaults={'id_usuario': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/usuarios/<id_usuario>",methods=['GET','DELETE'])
+@app.route("/usuarios/", defaults={'id_usuario': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/usuarios", defaults={'id_usuario': None}, methods=['POST','GET','DELETE','PUT'])
 def usuario(id_usuario):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -120,9 +120,9 @@ def pessoa_update(id_pessoa,nomerazaosocial,foto,telefone,id_usuario,tipopessoa,
     db.session.commit()
     return {'sucesso':True,'mensagem':'pessoa atualizada com sucesso.','id_pessoa':u.id_pessoa,'nomerazaosocial':u.nomerazaosocial,'foto':u.foto,'telefone':u.telefone,'id_usuario':u.id_usuario,'tipopessoa':u.tipopessoa,'cpfcnpj':u.cpfcnpj}
 
-@app.route("/pessoa/<id_pessoa>",methods=['GET','DELETE'])
-@app.route("/pessoa/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/pessoa", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pessoas/<id_pessoa>",methods=['GET','DELETE'])
+@app.route("/pessoas/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pessoas", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def pessoa(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -187,9 +187,9 @@ def endereco_update(id_pessoa,logradouro,complemento,bairro,cidade,cep,uf):
     db.session.commit()
     return {'sucesso':True,'mensagem':'endereco atualizado com sucesso.','id_pessoa':u.id_pessoa,'logradouro':u.logradouro,'complemento':u.complemento,'bairro':u.bairro,'cidade':u.cidade,'cep':u.cep,'uf':u.uf}
 
-@app.route("/endereco/<id_pessoa>",methods=['GET','DELETE'])
-@app.route("/endereco/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/endereco", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/enderecos/<id_pessoa>",methods=['GET','DELETE'])
+@app.route("/enderecos/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/enderecos", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def endereco(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -279,9 +279,9 @@ def cliente_get(id_pessoa):
 
     return {'sucesso':True,'mensagem':'cliente retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email}
 
-@app.route("/cliente/<id_pessoa>",methods=['GET','DELETE'])
-@app.route("/cliente/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/cliente", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/clientes/<id_pessoa>",methods=['GET','DELETE'])
+@app.route("/clientes/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/clientes", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def cliente(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -357,9 +357,9 @@ def empresa_get(id_pessoa):
 
     return {'sucesso':True,'mensagem':'empresa retornada com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email}
 
-@app.route("/empresa/<id_pessoa>",methods=['GET','DELETE'])
-@app.route("/empresa/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/empresa", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/empresas/<id_pessoa>",methods=['GET','DELETE'])
+@app.route("/empresas/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/empresas", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def empresa(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -409,9 +409,9 @@ def caminhao_update(id_caminhao,placa,capacidade,modelo,id_pessoa_emp):
     db.session.commit()
     return "Caminhao \"" + u.placa + "\" alterado com sucesso!"
 
-@app.route("/caminhao/<id_caminhao>",methods=['GET'])
-@app.route("/caminhao/", defaults={'id_caminhao': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/caminhao", defaults={'id_caminhao': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/caminhoes/<id_caminhao>",methods=['GET'])
+@app.route("/caminhoes/", defaults={'id_caminhao': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/caminhoes", defaults={'id_caminhao': None}, methods=['POST','GET','DELETE','PUT'])
 def caminhao(id_caminhao):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -492,9 +492,9 @@ def motorista_get(id_pessoa):
 
     return {'sucesso':True,'mensagem':'motorista retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email}
 
-@app.route("/motorista/<id_pessoa>",methods=['GET','DELETE'])
-@app.route("/motorista/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/motorista", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/motoristas/<id_pessoa>",methods=['GET','DELETE'])
+@app.route("/motoristas/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/motoristas", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def motorista(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -547,9 +547,9 @@ def pedido_update(id_pedido,id_pessoa_cli,id_pessoa_mot,valor,datahora,checkin,i
     db.session.commit()
     return "Pedido \"" + str(u.id_pedido) + "\" alterado com sucesso!"
 
-@app.route("/pedido/<id_pedido>",methods=['GET'])
-@app.route("/pedido/", defaults={'id_pedido': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/pedido", defaults={'id_pedido': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pedidos/<id_pedido>",methods=['GET'])
+@app.route("/pedidos/", defaults={'id_pedido': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pedidos", defaults={'id_pedido': None}, methods=['POST','GET','DELETE','PUT'])
 def pedido(id_pedido):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -601,9 +601,9 @@ def ranking_update(id_pessoa_deu,id_pedido,nota,comentario):
     db.session.commit()
     return "Ranking \"" + str(u.id_pessoa_deu) + "\" alterado com sucesso!"
 
-@app.route("/ranking/<id_pessoa_deu>,<id_pedido>",methods=['GET'])
-@app.route("/ranking/", defaults={'id_pessoa_deu': None,'id_pedido': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/ranking", defaults={'id_pessoa_deu': None,'id_pedido': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/rankings/<id_pessoa_deu>,<id_pedido>",methods=['GET'])
+@app.route("/rankings/", defaults={'id_pessoa_deu': None,'id_pedido': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/rankings", defaults={'id_pessoa_deu': None,'id_pedido': None}, methods=['POST','GET','DELETE','PUT'])
 def ranking(id_pessoa_deu,id_pedido):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -654,9 +654,9 @@ def formapagto_update(id_formapagto,descricao):
     db.session.commit()
     return "FormaPagto \"" + u.descricao + "\" alterado com sucesso!"
 
-@app.route("/formapagto/<id_formapagto>",methods=['GET'])
-@app.route("/formapagto/", defaults={'id_formapagto': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/formapagto", defaults={'id_formapagto': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/formapagtos/<id_formapagto>",methods=['GET'])
+@app.route("/formapagtos/", defaults={'id_formapagto': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/formapagtos", defaults={'id_formapagto': None}, methods=['POST','GET','DELETE','PUT'])
 def formapagto(id_formapagto):
     if (request.method == 'POST'):
         some_json = request.get_json()
@@ -710,9 +710,9 @@ def pagamento_update(id_pagamento,id_formapagto,valor,id_pedido,datahora):
     db.session.commit()
     return "Pagamento \"" + str(u.id_pagamento) + "\" alterado com sucesso!"
 
-@app.route("/pagamento/<id_pagamento>",methods=['GET'])
-@app.route("/pagamento/", defaults={'id_pagamento': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/pagamento", defaults={'id_pagamento': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pagamentos/<id_pagamento>",methods=['GET'])
+@app.route("/pagamentos/", defaults={'id_pagamento': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pagamentos", defaults={'id_pagamento': None}, methods=['POST','GET','DELETE','PUT'])
 def pagamento(id_pagamento):
     if (request.method == 'POST'):
         some_json = request.get_json()
