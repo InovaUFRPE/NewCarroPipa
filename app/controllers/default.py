@@ -27,52 +27,66 @@ def usuario_add(email,senha):
     i = Usuario(email,senha)
     db.session.add(i)
     db.session.commit()
-    return "Usuário \"" + i.email + "\" incluido com sucesso!"
+    return {'sucesso':True,'id_usuario':i.id_usuario,'email':i.email,'senha':i.senha}
 
 def usuario_delete(id_usuario):
     d = Usuario.query.get(id_usuario)
+    
+    if d == None:
+        return {'sucesso':False, 'mensagem':'usuário não existe.'}
+    
     db.session.delete(d)
     db.session.commit()
-    return "Usuário \"" + d.email + "\" excluído com sucesso!"
+    return {'sucesso':True, 'mensagem':'usuário removido com sucesso.'}
 
 def usuario_get(id_usuario):
     g = Usuario.query.get(id_usuario)
-    return "Usuário \"" + g.email
+    if g == None:
+        return {'sucesso':False, 'mensagem':'usuario não existe.'}
+
+    return {'sucesso':True,'mensagem':'usuário retornado com sucesso.','id_usuario':g.id_usuario,'email':g.email,'senha':g.senha}
 
 def usuario_update(id_usuario,email,senha):
     u = Usuario.query.get(id_usuario)
+    if u == None:
+        return {'sucesso':False, 'mensagem':'usuário não existe.'}
+
     u.email = email
     u.senha = senha
     db.session.commit()
-    return "Usuário \"" + u.email + "\" alterado com sucesso!"
 
-@app.route("/usuario/<id_usuario>",methods=['GET'])
+    return {'sucesso':True,'mensagem':'usuário atualizado com sucesso.','id_usuario':u.id_usuario,'email':u.email,'senha':u.senha}
+
+@app.route("/usuario/<id_usuario>",methods=['GET','DELETE'])
 @app.route("/usuario/", defaults={'id_usuario': None}, methods=['POST','GET','DELETE','PUT'])
 @app.route("/usuario", defaults={'id_usuario': None}, methods=['POST','GET','DELETE','PUT'])
 def usuario(id_usuario):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        if usuario_add(some_json['email'],some_json['senha']):
-            return jsonify({'sucesso':True}), 201
-        return jsonify({'sucesso':False}), 400
+        result = usuario_add(some_json['email'],some_json['senha'])    
+        if result['sucesso']:
+            return jsonify(result), 201
+        return jsonify(result), 400
 
     elif (request.method == 'DELETE'):
         some_json = request.get_json()
-        if usuario_delete(some_json['id_usuario']):
-            return jsonify({'sucesso':True}), 202
-        return jsonify({'sucesso':False}), 400
+        result = usuario_delete(some_json['id_usuario'])
+        if result['sucesso']:
+            return jsonify(result), 202
+        return jsonify(result), 400
 
     elif (request.method == 'GET'):
         result = usuario_get(id_usuario)
-        if result:
-            return jsonify({'sucesso':True, 'id_usuario':result['id_usuario'],'email':result['email'],'senha':result['senha'] })
-        return jsonify({'sucesso':False})
-    
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
+
     elif (request.method == 'PUT'):
         some_json = request.get_json()
-        if usuario_update(some_json['id_usuario'], some_json['email'], some_json['senha']):
-            return jsonify({'sucesso':True}), 200
-        return jsonify({'sucesso':False}), 400
+        result = usuario_update(some_json['id_usuario'], some_json['email'], some_json['senha'])
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
 
 
 '''----------------------------Pessoa--------------------------------'''

@@ -4,7 +4,7 @@ class Pagamento(db.Model):
     __tablename__ = "pagamento"
 
     id_pagamento = db.Column(db.Integer, primary_key=True)
-    id_formapagto = db.Column(db.Integer, db.ForeignKey('pagamento.id_formapagto'))
+    id_formapagto = db.Column(db.Integer, db.ForeignKey('formapagto.id_formapagto'))
     valor = db.Column(db.Float)
     id_pedido = db.Column(db.Integer, db.ForeignKey('pedido.id_pedido'))
     dataHora = db.Column(db.DateTime)
