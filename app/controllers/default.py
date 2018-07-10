@@ -737,3 +737,39 @@ def pagamento(id_pagamento):
         if pagamento_update(some_json['id_pagamento'],some_json['id_formapagto'],some_json['valor'],some_json['id_pedido'],some_json['datahora']):
             return jsonify({'sucesso':True}), 200
         return jsonify({'sucesso':False}), 400
+
+# LOGIN
+
+@app.route("/login/", methods=['POST'])
+@app.route("/login", methods=['POST'])
+def loginUsuario():
+    if (request.method == 'POST'):
+        some_json = request.get_json()
+        if 'email' not in some_json or 'senha' not in some_json or 'tipoPessoa' not in some_json:
+            return jsonify({'sucesso':False,'mensagem':'Parâmetro(s) faltando no Json'}), 404
+
+        g = Usuario.query.filter(Usuario.email == email).first()
+
+        if g == None:
+            return jsonify({'sucesso':False,'mensagem':'Usuário não cadastrado'}), 404
+        if g.senha != some_json['senha']:
+            return jsonify({'sucesso':False,'mensagem':'Senha não confere'}), 404
+        
+        if some_json['tipoPessoa'] == 'motorista':
+            g = Motorista.query.get(id_pessoa)
+            if g == None:
+                return {'sucesso':False, 'mensagem':'motorista não existe.'}, 404
+                h = Pessoa.query.get(str(g.id_pessoa))
+                g = {'sucesso':True,'mensagem':'motorista retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':some_json['senha']}
+
+        if some_json['tipoPessoa'] == 'cliente':
+            g = Cliente.query.get(id_pessoa)
+            if g == None:
+                return {'sucesso':False, 'mensagem':'cliente não existe.'}, 404
+                h = Pessoa.query.get(str(g.id_pessoa))
+                g = {'sucesso':True,'mensagem':'cliente retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':some_json['senha']}
+
+        if g['sucesso'] == False:
+            return jsonify(g), 404
+        else:
+            return jsonify(g), 200
