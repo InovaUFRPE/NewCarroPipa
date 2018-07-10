@@ -754,20 +754,22 @@ def loginUsuario():
             return jsonify({'sucesso':False,'mensagem':'Usuário não cadastrado'}), 404
         if g.senha != some_json['senha']:
             return jsonify({'sucesso':False,'mensagem':'Senha não confere'}), 404
+
+        p = Pessoa.query.filter(Pessoa.id_pessoa == g.id_usuario).first()
+        if p == None:
+            return jsonify({'sucesso':False,'mensagem':'Usuário não foi cadastrado corretamente'}), 404
         
         if some_json['tipoPessoa'] == 'motorista':
-            g = Motorista.query.get(id_pessoa)
+            g = Motorista.query.get(p.id_pessoa)
             if g == None:
                 return {'sucesso':False, 'mensagem':'motorista não existe.'}, 404
-                h = Pessoa.query.get(str(g.id_pessoa))
-                g = {'sucesso':True,'mensagem':'motorista retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':some_json['senha']}
+                g = {'sucesso':True,'mensagem':'motorista retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':p.cpfcnpj,'nomerazaosocial':p.nomerazaosocial,'email':some_json['senha']}
 
         if some_json['tipoPessoa'] == 'cliente':
-            g = Cliente.query.get(id_pessoa)
+            g = Cliente.query.get(p.id_pessoa)
             if g == None:
                 return {'sucesso':False, 'mensagem':'cliente não existe.'}, 404
-                h = Pessoa.query.get(str(g.id_pessoa))
-                g = {'sucesso':True,'mensagem':'cliente retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':some_json['senha']}
+                g = {'sucesso':True,'mensagem':'cliente retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':p.cpfcnpj,'nomerazaosocial':p.nomerazaosocial,'email':some_json['senha']}
 
         if g['sucesso'] == False:
             return jsonify(g), 404
