@@ -748,7 +748,7 @@ def loginUsuario():
         if 'email' not in some_json or 'senha' not in some_json or 'tipoPessoa' not in some_json:
             return jsonify({'sucesso':False,'mensagem':'Parâmetro(s) faltando no Json'}), 404
 
-        g = Usuario.query.filter(Usuario.email == email).first()
+        g = Usuario.query.filter(Usuario.email == some_json['email']).first()
 
         if g == None:
             return jsonify({'sucesso':False,'mensagem':'Usuário não cadastrado'}), 404
