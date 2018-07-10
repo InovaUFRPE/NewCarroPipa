@@ -1,20 +1,43 @@
 package com.inovaufrpe.carropipa;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.inovaufrpe.carropipa.utils.Conexao;
+import com.inovaufrpe.carropipa.utils.Validacao;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 public class LoginActivity extends AppCompatActivity {
+
 
     private EditText edtLogin, edtSenha;
     private Button btnEntrar,btnCadastrar;
     private Switch swtTipo;
+    private static final int NOTIFICATION_PERMISSION_CODE = 123;
+    JSONObject json;
+    String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logar();
+                validar();
             }
         });
 
@@ -43,9 +66,37 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(it);
             }
         });
+        requestNotificationPermission();
     }
 
-    private void logar(){
+    private void requestNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NOTIFICATION_POLICY) == PackageManager.PERMISSION_GRANTED)
+            return;
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_NOTIFICATION_POLICY)) {
+
+        }
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NOTIFICATION_POLICY}, NOTIFICATION_PERMISSION_CODE );
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //Checking the cadastro code of our cadastro
+        if (requestCode == NOTIFICATION_PERMISSION_CODE ) {
+
+            //If permission is granted
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Displaying a toast
+                Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
+            } else {
+                //Displaying another toast if permission is not granted
+                Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void validar(){
         Validacao validacao = new Validacao();
         String login = edtLogin.getText().toString();
         String senha = edtSenha.getText().toString();
@@ -59,12 +110,69 @@ public class LoginActivity extends AppCompatActivity {
             isValid = false;
         }
         if (isValid){
-            //Toast.makeText(this, "logou", Toast.LENGTH_SHORT).show();
-            Intent it = new Intent(LoginActivity.this,HomeFisicaActivity.class);
-            finish();
-            startActivity(it);
+            try {
+                enviaInfo(login, senha);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
+
+    private void enviaInfo(String login, String senha) throws JSONException {
+        if(!connected()){
+            Toast.makeText(this, "Conecte-se a internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        json = new JSONObject();
+        json.put("email",edtLogin.getText().toString());
+        json.put("senha",edtSenha.getText().toString());
+        url = "http://api-carro-pipa.herokuapp.com/login";
+
+        if (swtTipo.isChecked()){
+            json.put("tipoPessoa","motorista");
+        } else {
+            json.put("tipoPessoa","cliente");
+        }
+
+        new Request().execute();
+    }
+
+    private class Request extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            return Conexao.login(url,json);
+        }
+
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Toast.makeText(LoginActivity.this, "Dados incorretos", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                if (swtTipo.isChecked()){
+                    Intent it = new Intent(LoginActivity.this,HomeCaminhoneiroActivity.class);
+                    finish();
+                    startActivity(it);
+                } else {
+                    Intent it = new Intent(LoginActivity.this,HomeFisicaActivity.class);
+                    finish();
+                    startActivity(it);
+                }
+            }
+        }
+    }
+
+
+    public boolean connected(){
+        ConnectivityManager conexao = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = conexao.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
+
+
+
 
 
 }

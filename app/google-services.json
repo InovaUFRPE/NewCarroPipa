@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "884203840973",
+    "firebase_url": "https://carropipa-24854.firebaseio.com",
+    "project_id": "carropipa-24854",
+    "storage_bucket": "carropipa-24854.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884203840973:android:7917dc170d8a6ee1",
+        "android_client_info": {
+          "package_name": "com.inovaufrpe.carropipa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "884203840973-qongjvvupvarhbvdsudjjr6nrpqiqi9g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.inovaufrpe.carropipa",
+            "certificate_hash": "32a505e76cbb2562571cfd059745c663c708ea22"
+          }
+        },
+        {
+          "client_id": "884203840973-9kd8eh95tfc08rtoaeoo47i3srt6kc10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDOZ2dH35TpN4o6QNS3zLbfaw5VRKXhJ8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "884203840973-9kd8eh95tfc08rtoaeoo47i3srt6kc10.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
