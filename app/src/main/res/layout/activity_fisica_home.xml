@@ -50,13 +50,24 @@
 
         </LinearLayout>
 
+        <!--<android.support.v7.widget.RecyclerView
+            android:id="@+id/pedidosList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:visibility="gone"
+            android:scrollbars="vertical" />-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/clear"
             android:orientation="vertical"
             android:padding="16dp"
+            android:visibility="gone"
             android:layout_marginBottom="16dp">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -104,7 +115,7 @@
 
             <LinearLayout
                 android:id="@+id/lySeekBarLitros"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -118,10 +129,11 @@
                     android:textSize="20sp" />
 
                 <SeekBar
+                    android:id="@+id/sbLitros"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:max="500"
-                    android:min="10"
+                    android:max="50000"
+                    android:min="10000"
                     android:paddingVertical="10dp" />
 
                 <RelativeLayout
@@ -133,6 +145,19 @@
                         android:layout_height="wrap_content"
                         android:text="1.000"
                         android:textColor="@color/dark"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textViewlitros"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:text="1000 Litros"
+                        android:textColor="@color/accent"
                         android:textSize="18sp" />
 
                     <TextView
@@ -165,6 +190,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
+                        android:layout_marginTop="0dp"
                         android:layout_marginRight="16dp"
                         android:layout_toStartOf="@+id/btnPedirAgua"
                         android:background="@color/transparent"

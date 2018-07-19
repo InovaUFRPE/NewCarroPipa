@@ -9,6 +9,7 @@ public abstract class Masks {
     public static final String maskCNPJ = "##.###.###/####-##";
     public static final String maskCPF = "###.###.###-##";
     public static final String maskTELEFONE = "(##) #####-####";
+    public static final String maskCEP = "#####-###";
 
 
     public static String unmask(String s) {

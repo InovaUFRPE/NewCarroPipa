@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.inovaufrpe.carropipa.utils.Conexao;
@@ -34,9 +35,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText edtLogin, edtSenha;
     private Button btnEntrar,btnCadastrar;
+
     private Switch swtTipo;
     private static final int NOTIFICATION_PERMISSION_CODE = 123;
     JSONObject json;
+
     String url;
 
     @Override
@@ -49,11 +52,15 @@ public class LoginActivity extends AppCompatActivity {
         edtSenha = findViewById(R.id.editText2);
         swtTipo = findViewById(R.id.switch1);
 
+
         btnEntrar = findViewById(R.id.btnEntrar);
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validar();
+                validar();/*
+                Intent it = new Intent(LoginActivity.this,HomeFisicaActivity.class);
+                finish();
+                startActivity(it);*/
             }
         });
 
@@ -130,9 +137,9 @@ public class LoginActivity extends AppCompatActivity {
         url = "http://api-carro-pipa.herokuapp.com/login";
 
         if (swtTipo.isChecked()){
-            json.put("tipoPessoa","motorista");
+            json.put("tipopessoa","motorista");
         } else {
-            json.put("tipoPessoa","cliente");
+            json.put("tipopessoa","cliente");
         }
 
         new Request().execute();
@@ -145,11 +152,17 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result){
+            Log.i("resultado",result);
             if (result.equals("NOT FOUND")){
-                Toast.makeText(LoginActivity.this, "Dados incorretos", Toast.LENGTH_SHORT).show();
+                try {
+                    Toast.makeText(LoginActivity.this, json.getString("tipopessoa"), Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
             else{
                 if (swtTipo.isChecked()){
+
                     Intent it = new Intent(LoginActivity.this,HomeCaminhoneiroActivity.class);
                     finish();
                     startActivity(it);
@@ -169,10 +182,4 @@ public class LoginActivity extends AppCompatActivity {
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         return isConnected;
     }
-
-
-
-
-
-
 }

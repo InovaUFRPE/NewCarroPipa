@@ -39,13 +39,13 @@
                     android:textSize="17sp" />
 
                 <EditText
-                        android:id="@+id/editTextNome"
-                        style="@style/Background30Opacity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:hint="Nome"
-                        android:inputType="text" />
+                    android:id="@+id/editTextNome"
+                    style="@style/Background30Opacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Nome"
+                    android:inputType="text" />
 
                 <EditText
                     android:id="@+id/editTextCpf"
@@ -61,11 +61,11 @@
                     android:id="@+id/editTextTelefone"
                     style="@style/Background30Opacity"
                     android:layout_width="match_parent"
-
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:hint="Telefone"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:visibility="visible"/>
 
                 <EditText
                     android:id="@+id/editTextEmail"
@@ -94,13 +94,97 @@
                     android:hint="Confirmação de senha"
                     android:inputType="textPassword" />
 
+                <EditText
+                    android:id="@+id/editTextLogradouro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Background30Opacity"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="23dp"
+                    android:hint="Logradouro"
+                    android:visibility="gone"
+                    android:inputType="text" />
+
+                <EditText
+                    android:id="@+id/editTextBairro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Background30Opacity"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Bairro"
+                    android:visibility="gone"
+                    android:inputType="text" />
+
+                <EditText
+                    android:id="@+id/editTextCidade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Background30Opacity"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Cidade"
+                    android:visibility="gone"
+                    android:inputType="text" />
+
+                <EditText
+                    android:id="@+id/editTextComplemento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Background30Opacity"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Complemento"
+                    android:visibility="gone"
+                    android:inputType="text" />
+
+                <EditText
+                    android:id="@+id/editTextCep"
+                    style="@style/Background30Opacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="CEP"
+                    android:inputType="number"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/editTextEstado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Background30Opacity"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Estado"
+                    android:visibility="gone"
+                    android:inputType="text" />
+
+                <Button
+                    android:id="@+id/btnContinuar"
+                    style="@style/ButtonAccent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Continuar" />
+
+
+                <Button
+                    android:id="@+id/btnVoltar"
+                    style="@style/ButtonAccent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Voltar"
+                    android:visibility="gone" />
+
                 <Button
                     android:id="@+id/btnCadastrar"
                     style="@style/ButtonAccent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
+                    android:visibility="gone"
                     android:text="Confirmar" />
+
+
+
+
 
         </LinearLayout>
     </ScrollView>
