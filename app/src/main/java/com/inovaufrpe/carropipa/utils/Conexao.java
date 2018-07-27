@@ -99,4 +99,39 @@ public class Conexao {
             return null;
         }
     }
+
+    public static String recuperainfo(String urlLogin){
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+        try{
+            URL url = new URL(urlLogin);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Content-Type","application/json");
+            urlConnection.setRequestProperty("Accept","application/json");
+            urlConnection.connect();
+
+
+            StringBuilder stringBuilder = new StringBuilder();
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                InputStreamReader streamReader = new InputStreamReader(urlConnection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(streamReader);
+                String response = null;
+                while((response = bufferedReader.readLine())!=null){
+                    stringBuilder.append(response+"\n");
+                }
+                bufferedReader.close();
+                return stringBuilder.toString();
+            } else {
+                Log.i("teste1",urlConnection.getResponseMessage());
+                //Toast.makeText(LoginActivity.this, "Informações incorretas", Toast.LENGTH_SHORT).show();
+                return urlConnection.getResponseMessage();
+            }
+        } catch (Exception e) {
+            Log.i("teste2",e.toString());
+            return null;
+        }
+    }
 }

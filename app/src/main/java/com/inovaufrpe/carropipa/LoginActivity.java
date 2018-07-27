@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result){
-            Log.i("resultado",result);
+            //Log.i("resultado",result);
             if (result.equals("NOT FOUND")){
                 try {
                     Toast.makeText(LoginActivity.this, json.getString("tipopessoa"), Toast.LENGTH_SHORT).show();
@@ -161,13 +161,16 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
             else{
+                Bundle bundle = new Bundle();
+                bundle.putString("dados login",result);
                 if (swtTipo.isChecked()){
-
                     Intent it = new Intent(LoginActivity.this,HomeCaminhoneiroActivity.class);
+                    it.putExtras(bundle);
                     finish();
                     startActivity(it);
                 } else {
                     Intent it = new Intent(LoginActivity.this,HomeFisicaActivity.class);
+                    it.putExtras(bundle);
                     finish();
                     startActivity(it);
                 }

@@ -132,8 +132,9 @@
                     android:id="@+id/sbLitros"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:max="50000"
-                    android:min="10000"
+                    android:max="50"
+                    android:progress="1"
+                    android:min="1"
                     android:paddingVertical="10dp" />
 
                 <RelativeLayout
@@ -143,7 +144,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1.000"
+                        android:text="1000"
                         android:textColor="@color/dark"
                         android:textSize="18sp" />
 
@@ -230,16 +231,6 @@
                     android:layout_marginRight="16dp"
                     android:paddingHorizontal="25dp"
                     android:paddingVertical="4dp"
-                    android:text="1 dia"
-                    android:textAllCaps="false" />
-
-                <Button
-                    style="@style/ButtonPrimary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    android:paddingHorizontal="25dp"
-                    android:paddingVertical="4dp"
                     android:text="15 dias"
                     android:textAllCaps="false" />
 
@@ -251,16 +242,6 @@
                     android:paddingHorizontal="25dp"
                     android:paddingVertical="4dp"
                     android:text="30 dias"
-                    android:textAllCaps="false" />
-
-                <Button
-                    style="@style/ButtonPrimary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="14dp"
-                    android:paddingHorizontal="25dp"
-                    android:paddingVertical="4dp"
-                    android:text="6 meses"
                     android:textAllCaps="false" />
 
                 <Button

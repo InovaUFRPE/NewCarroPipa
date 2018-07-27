@@ -1,16 +1,23 @@
 package com.inovaufrpe.carropipa;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.inovaufrpe.carropipa.utils.Conexao;
+
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -29,8 +36,11 @@ public class HomeFisicaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_fisica_home);
+        recuperaInformacoes();
+
         lySeekBarLitros = findViewById(R.id.lySeekBarLitros);
         lyPedirAgua = findViewById(R.id.lyPedirAgua);
+
 
 
         sbLitros = findViewById(R.id.sbLitros);
@@ -42,17 +52,17 @@ public class HomeFisicaActivity extends AppCompatActivity {
         sbLitros.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tvLitros.setText(String.valueOf(seekBar.getProgress())+" Litros");
+                tvLitros.setText(String.valueOf(seekBar.getProgress()*1000)+" Litros");
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                tvLitros.setText(String.valueOf(seekBar.getProgress())+ " Litros");
+                tvLitros.setText(String.valueOf(seekBar.getProgress()*1000)+ " Litros");
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                tvLitros.setText(String.valueOf(seekBar.getProgress()) + " Litros");
+                tvLitros.setText(String.valueOf(seekBar.getProgress()*1000) + " Litros");
             }
         });
 
@@ -69,6 +79,14 @@ public class HomeFisicaActivity extends AppCompatActivity {
                 createDialog();
             }
         });
+    }
+
+    public void recuperaInformacoes(){
+        Intent intent = getIntent();
+        Bundle dados = intent.getExtras();
+        String info = dados.getString("dados login");
+        Log.i("info",info);
+        //new HomeFisicaActivity.Request().execute();
     }
 
     public void alternaLayoutPedirEscolher(View v){
@@ -104,4 +122,21 @@ public class HomeFisicaActivity extends AppCompatActivity {
     private void solicitarCaminhao(Integer litros){
         Toast.makeText(this, litros.toString(), Toast.LENGTH_SHORT).show();
     }
+
+    /*private class Request extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            return Conexao.recuperainfo("http://api-carro-pipa.herokuapp.com/");
+        }
+
+        protected void onPostExecute(String result){
+            //Log.i("resultado",result);
+            if (result.equals("NOT FOUND")){
+                Log.i("n","adada");
+            }
+            else{
+                Log.i("s",result);
+            }
+        }
+    }*/
 }
