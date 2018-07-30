@@ -13,6 +13,7 @@ from app.models.ModelRanking import Ranking
 from app.models.ModelFormaPagto import FormaPagto
 from app.models.ModelPagamento import Pagamento
 from app.models.ModelPedido import Pedido
+from app.models.ModelLocalizacao import Localizacao
 
 
 @app.route("/index/<user>")
@@ -813,3 +814,43 @@ def loginUsuario():
             return jsonify(g), 404
         else:
             return jsonify(g), 200
+
+# Localizacao
+
+def addLocalizacao(lat,lng,id_pessoa):
+    i = Localizacao(lat, lng, id_pessoa)
+    db.session.add(i)
+    db.session.commit()
+    return True
+
+def getLocalizacao(idP):
+    g = Localizacao.query.get(idP)
+    return {"id_pessoa": g.id_pessoa,"latitude": g.latitude,"longitude": g.longitude}
+
+def putLocalizacao(idP,lat,lng):
+    u = Localizacao.query.filter(Localizacao.id_pessoa == idP).first()
+    u.latitude = lat
+    u.longitude = lng
+    db.session.commit()
+    return True
+
+@app.route("/localizacoes/<id_pessoa>",methods=['GET'])
+@app.route("/localizacoes", defaults={'id_pessoa': None}, methods=['POST','PUT'])
+def localizacao(id_pessoa):
+    if (request.method == 'POST'):
+        some_json = request.get_json()
+        if addLocalizacao(some_json['latitude'],some_json['longitude'],some_json['id_pessoa']):
+            return jsonify({'sucesso':True}), 201
+        return jsonify({'sucesso':False}), 400
+
+    elif (request.method == 'GET'):
+        result = getLocalizacao(id_pessoa)
+        if result:
+            return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa'],'latitude':result['latitude'],'longitude':result['longitude']}), 200
+        return jsonify({'sucesso':False})
+    
+    elif (request.method == 'PUT'):
+        some_json = request.get_json()
+        if putLocalizacao(some_json['id_pessoa'], some_json['latitude'],some_json['longitude']):
+            return jsonify({'sucesso':True}), 204
+        return jsonify({'sucesso':False}), 400
