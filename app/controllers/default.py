@@ -304,6 +304,7 @@ def cliente(id_pessoa):
             return jsonify(result), 200
         return jsonify(result), 400
 
+
 '''----------------------------Empresa--------------------------------'''
 
 def empresa_add(email,senha,nomerazaosocial,foto,telefone,tipopessoa,cpfcnpj,logradouro,complemento,bairro,cidade,cep,uf):
@@ -739,16 +740,60 @@ def pagamento(id_pagamento):
             return jsonify({'sucesso':True}), 200
         return jsonify({'sucesso':False}), 400
 
-# LOGIN
+
+'''------------------------------Login----------------------------------'''
+
+def login(email,senha,tipopessoa):
+    result = validarIntegridade(email,senha,tipopessoa)
+    
+    if result['sucesso'] is False:
+        return result
+        
+    g = Usuario.query.filter(Usuario.email == email).first()
+    
+    return validarSenha(g, senha, tipopessoa)
+    
+def validarIntegridade(email, senha, tipopessoa):
+    if email == None or senha == None or email == '' or senha == '':
+        return {'sucesso':False,'mensagem':'email ou senha em branco.'}
+    if tipopessoa == None:
+        return {'sucesso':False, 'mensagem':'tipopessoa em branco'}
+    elif tipopessoa == 'cliente' or tipopessoa == 'motorista':
+        pass
+    return {'sucesso':True}
+
+def validarSenha(valor, senha, tipopessoa):
+    if valor == None:
+        pass
+    elif valor.senha == senha:
+        result = recuperarIds(valor,tipopessoa)
+        if result['sucesso']:
+            return {'sucesso':True,'mensagem':'logado com sucesso','id_usuario':valor.id_usuario, 'id_pessoa':result['id_pessoa'] ,'email':valor.email}
+        return result
+    return {'sucesso':False,'mensagem':'email ou senha incorreto.'}
+
+def recuperarIds(valor, tipopessoa):
+    p = Pessoa.query.filter(Pessoa.id_usuario == valor.id_usuario).first()
+
+    result = validarPessoa(p)
+
+    if result['sucesso']:
+        return {'sucesso':True,'id_pessoa':p.id_pessoa}
+    return result
+
+def validarPessoa(pessoa):
+    if pessoa == None:
+        return {'sucesso':False, 'mensagem':'usuário não cadastrado.'}
+    return {'sucesso':True}
 
 @app.route("/login/", methods=['POST'])
 @app.route("/login", methods=['POST'])
 def loginUsuario():
     if (request.method == 'POST'):
         some_json = request.get_json()
-        if 'email' not in some_json or 'senha' not in some_json or 'tipoPessoa' not in some_json:
+        if 'email' not in some_json or 'senha' not in some_json or 'tipopessoa' not in some_json:
             return jsonify({'sucesso':False,'mensagem':'Parâmetro(s) faltando no Json'}), 404
-
+        '''
         g = Usuario.query.filter(Usuario.email == some_json['email']).first()
 
         if g == None:
@@ -760,7 +805,9 @@ def loginUsuario():
         if p == None:
             return jsonify({'sucesso':False,'mensagem':'Usuário não foi cadastrado corretamente'}), 404
         
-        g = {'sucesso':True,'mensagem':'Logado com sucesso','email':some_json['senha']}
+        g = {'sucesso':True,'mensagem':'Logado com sucesso','email':some_json['email']}
+        '''
+        g = login(some_json['email'],some_json['senha'], some_json['tipopessoa'])
 
         if g['sucesso'] == False:
             return jsonify(g), 404
