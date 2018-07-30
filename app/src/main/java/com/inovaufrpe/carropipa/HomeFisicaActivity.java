@@ -150,7 +150,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                solicitar(pedido);
+                new HomeFisicaActivity.RequestPedido().execute();
             }
         });
         builder.setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
@@ -164,9 +164,6 @@ public class HomeFisicaActivity extends AppCompatActivity {
     }
 
 
-    private void solicitar(JSONObject pedido){
-        //aqui chamaria a função request pedido que ia
-    }
 
 
 
@@ -196,18 +193,19 @@ public class HomeFisicaActivity extends AppCompatActivity {
         }
     }
 
+    //essa request faz o registro do pedido
     private class RequestPedido extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
-            String url = "http://api-carro-pipa.herokuapp.com/pedidos/";
+            String url = "http://api-carro-pipa.herokuapp.com/pedidos";
             return Conexao.pedido(url,pedido);
 
         }
         protected void onPostExecute(String result){
-            Log.i("res: ",result);
             if (result.equals("NOT FOUND")){
+                Log.i("Erro: ", "erro");
             }else {
-
+                Log.i("Sucesso: ", result);
             }
 
         }

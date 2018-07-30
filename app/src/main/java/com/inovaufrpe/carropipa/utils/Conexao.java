@@ -100,14 +100,16 @@ public class Conexao {
         }
     }
 
-    public static String pedido(String urlpedido, JSONObject json){
+    public static String pedido(String urlLogin, JSONObject json){
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         try{
-            URL url = new URL(urlpedido);
+            URL url = new URL(urlLogin);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
+
+            urlConnection.setAllowUserInteraction(true);
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type","application/json");
             urlConnection.setRequestProperty("Accept","application/json");
@@ -129,8 +131,7 @@ public class Conexao {
                 bufferedReader.close();
                 return stringBuilder.toString();
             } else {
-                Log.i("teste1",urlConnection.getResponseMessage());
-                //Toast.makeText(LoginActivity.this, "Informações incorretas", Toast.LENGTH_SHORT).show();
+                Log.i("teste1", String.valueOf(urlConnection.getErrorStream()));
                 return urlConnection.getResponseMessage();
             }
         } catch (Exception e) {
@@ -170,7 +171,7 @@ public class Conexao {
         }
     }
 
-    public static String teste(String urlLogin){
+    public static String localizacao(String urlLogin){
         HttpURLConnection urlConnection;
         BufferedReader reader;
         try{

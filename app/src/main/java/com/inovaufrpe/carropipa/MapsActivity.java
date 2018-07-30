@@ -5,11 +5,14 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.inovaufrpe.carropipa.utils.Conexao;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -38,9 +42,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        updateLocation();
 
+        mMap = googleMap;
+        locationManager = 
+        updateLocation();
+        Thread t = new ThreadLocalizacao();
+        t.start();
     }
 
 
@@ -55,8 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    Log.i("location: ",String.valueOf(location.getLatitude()) + ", " + String.valueOf(location.getLongitude()));
-                    //aqui tu chama a request que manda a localização dele pro banco
+
                 }
 
                 @Override
@@ -98,6 +104,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 }
             });
+        }
+    }
+
+
+    public class ThreadLocalizacao extends Thread {
+        public ThreadLocalizacao() {}
+        @Override
+        public void run() {
+            while(true){
+                new MapsActivity.RequestLocalizacao().execute();
+                SystemClock.sleep(10000);
+            }
+        }
+    }
+
+    private class RequestLocalizacao extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            //botar a url de verificar os pedidos
+            String url = "http://api-carro-pipa.herokuapp.com/localizacoes/1";
+            return Conexao.localizacao(url);
+        }
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Log.i("Erro: ","erro");
+            }
+            else{
+                //AQUI ELE PEGA O RETORNO DA REQUEST DOS PEDIDOS, MANDAR PRA LISTVIEW
+                Toast.makeText(MapsActivity.this, result, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
