@@ -12,6 +12,7 @@ from app.models.ModelMotorista import Motorista
 from app.models.ModelRanking import Ranking
 from app.models.ModelFormaPagto import FormaPagto
 from app.models.ModelPagamento import Pagamento
+from app.models.ModelPedido import Pedido
 
 
 @app.route("/index/<user>")
@@ -533,7 +534,7 @@ def pedido_delete(id_pedido):
 
 def pedido_get(id_pedido):
     g = Pedido.query.get(id_pedido)
-    return "Pedido \"" + str(g.id_pedido)
+    return {"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"datahora": g.dataHora,"checkin": g.checkIn,"imediatoprogramado": g.imediatoProgramado,"confirmaprogramado": g.confirmadoProgramado}
 
 def pedido_update(id_pedido,id_pessoa_cli,id_pessoa_mot,valor,datahora,checkin,imediatoprogramado,confirmaprogramado):
     u = Pedido.query.get(id_pedido)
@@ -566,7 +567,7 @@ def pedido(id_pedido):
     elif (request.method == 'GET'):
         result = pedido_get(id_pedido)
         if result:
-            return jsonify({'sucesso':True, 'id_pedido':result['id_pedido'],'id_pessoa_cli':result['id_pessoa_cli'],'id_pessoa_mot':result['id_pessoa_mot'],'valor':result['valor'],'datahora':result['datahora'],'checkin':result['checkin'],'imediatoprogramado':result['imediatoprogramado'],'confirmaprogramado':result['confirmaprogramado']})
+            return jsonify({'sucesso':True, 'id_pessoa_cli':result['id_pessoa_cli'],'id_pessoa_mot':result['id_pessoa_mot'],'valor':result['valor'],'datahora':result['datahora'],'checkin':result['checkin'],'imediatoprogramado':result['imediatoprogramado'],'confirmaprogramado':result['confirmaprogramado']})
         return jsonify({'sucesso':False})
     
     elif (request.method == 'PUT'):

@@ -7,7 +7,7 @@ class Pedido(db.Model):
     id_pessoa_cli = db.Column(db.Integer, db.ForeignKey('cliente.id_pessoa'))
     id_pessoa_mot = db.Column(db.Integer, db.ForeignKey('motorista.id_pessoa'))
     valor = db.Column(db.Float)
-    dataHora = db.Column(db.DateTime)
+    dataHora = db.Column(db.Integer)
     checkIn = db.Column(db.String)
     imediatoProgramado = db.Column(db.String)
     confirmadoProgramado = db.Column(db.String)
