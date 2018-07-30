@@ -101,20 +101,17 @@ public class Conexao {
     }
 
     public static String recuperainfo(String urlLogin){
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
+        HttpURLConnection urlConnection;
+        BufferedReader reader;
         try{
             URL url = new URL(urlLogin);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoInput(true);
-            urlConnection.setDoOutput(true);
+            urlConnection.setAllowUserInteraction(false);
             urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("Content-Type","application/json");
-            urlConnection.setRequestProperty("Accept","application/json");
             urlConnection.connect();
-
-
             StringBuilder stringBuilder = new StringBuilder();
+
             if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
                 InputStreamReader streamReader = new InputStreamReader(urlConnection.getInputStream());
                 BufferedReader bufferedReader = new BufferedReader(streamReader);
@@ -125,12 +122,11 @@ public class Conexao {
                 bufferedReader.close();
                 return stringBuilder.toString();
             } else {
-                Log.i("teste1",urlConnection.getResponseMessage());
-                //Toast.makeText(LoginActivity.this, "Informações incorretas", Toast.LENGTH_SHORT).show();
+                Log.i("sucesso", String.valueOf(urlConnection.getResponseCode()));
                 return urlConnection.getResponseMessage();
             }
         } catch (Exception e) {
-            Log.i("teste2",e.toString());
+            Log.i("erro",e.toString());
             return null;
         }
     }

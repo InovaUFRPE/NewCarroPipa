@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,8 +17,8 @@ import android.widget.Toast;
 import com.inovaufrpe.carropipa.utils.Conexao;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.List;
 
 public class HomeFisicaActivity extends AppCompatActivity {
 
@@ -31,12 +30,23 @@ public class HomeFisicaActivity extends AppCompatActivity {
     private SeekBar sbLitros;
     private TextView tvLitros;
 
+    private TextView olaUsuario;
+
+    private JSONObject usuario;
+    private JSONObject cliente;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_fisica_home);
-        recuperaInformacoes();
+        try {
+            recuperaInformacoes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        olaUsuario = findViewById(R.id.txtViewOla);
 
         lySeekBarLitros = findViewById(R.id.lySeekBarLitros);
         lyPedirAgua = findViewById(R.id.lyPedirAgua);
@@ -81,12 +91,13 @@ public class HomeFisicaActivity extends AppCompatActivity {
         });
     }
 
-    public void recuperaInformacoes(){
+    public void recuperaInformacoes() throws Exception{
         Intent intent = getIntent();
         Bundle dados = intent.getExtras();
         String info = dados.getString("dados login");
-        Log.i("info",info);
-        //new HomeFisicaActivity.Request().execute();
+        usuario = new JSONObject(info);
+        new HomeFisicaActivity.RequestRecupera().execute();
+
     }
 
     public void alternaLayoutPedirEscolher(View v){
@@ -123,20 +134,29 @@ public class HomeFisicaActivity extends AppCompatActivity {
         Toast.makeText(this, litros.toString(), Toast.LENGTH_SHORT).show();
     }
 
-    /*private class Request extends AsyncTask<Void, Void, String> {
+    private class RequestRecupera extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
-            return Conexao.recuperainfo("http://api-carro-pipa.herokuapp.com/");
+            String url = "http://api-carro-pipa.herokuapp.com/pessoas/";
+            try {
+                return Conexao.recuperainfo(url+ usuario.get("id_pessoa").toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
-
         protected void onPostExecute(String result){
-            //Log.i("resultado",result);
             if (result.equals("NOT FOUND")){
-                Log.i("n","adada");
+                Log.i("Erro: ","erro");
             }
             else{
-                Log.i("s",result);
+                try {
+                    cliente = new JSONObject(result);
+                    olaUsuario.setText("Olá, " + cliente.getString("nomerazaosocial"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
-    }*/
+    }
 }
