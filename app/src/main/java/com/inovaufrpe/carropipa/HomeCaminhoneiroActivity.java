@@ -1,5 +1,7 @@
 package com.inovaufrpe.carropipa;
 
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.Activity;
@@ -10,73 +12,105 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.inovaufrpe.carropipa.utils.Conexao;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HomeCaminhoneiroActivity extends AppCompatActivity {
 
-    private static final int PERMISSIONS_REQUEST = 100;
+    private JSONObject usuario;
+    private JSONObject cliente;
+
+    private TextView olaUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            finish();
-        }
-
-//Check whether this app has access to the location permission//
-
-        int permission = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-
-//If the location permission has been granted, then start the TrackerService//
-
-        if (permission == PackageManager.PERMISSION_GRANTED) {
-            startTrackerService();
-        } else {
-
-//If the app doesn’t currently have access to the user’s location, then cadastro access//
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST);
-        }
-
         setContentView(R.layout.activity_caminhoneiro_home);
+
+        olaUsuario = (TextView) findViewById(R.id.txtViewOla);
+
+        try {
+            recuperaInformacoes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //inicia a Thread que fica verificando os pedidos
+        Thread t = new ThreadVerificarPedidos();
+        t.start();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[]
-            grantResults) {
+    public void recuperaInformacoes() throws Exception{
+        Intent intent = getIntent();
+        Bundle dados = intent.getExtras();
+        String info = dados.getString("dados login");
+        usuario = new JSONObject(info);
+        new HomeCaminhoneiroActivity.RequestRecupera().execute();
 
-//If the permission has been granted...//
+    }
 
-        if (requestCode == PERMISSIONS_REQUEST && grantResults.length == 1
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-//...then start the GPS tracking service//
-
-            startTrackerService();
-        } else {
-
-//If the user denies the permission cadastro, then display a toast with some more information//
-
-            Toast.makeText(this, "Please enable location services to allow GPS tracking", Toast.LENGTH_SHORT).show();
+    private class RequestRecupera extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            String url = "http://api-carro-pipa.herokuapp.com/pessoas/";
+            try {
+                return Conexao.recuperainfo(url+ usuario.get("id_pessoa").toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Log.i("Erro: ","erro");
+            }
+            else{
+                try {
+                    cliente = new JSONObject(result);
+                    olaUsuario.setText("Olá, " + cliente.getString("nomerazaosocial"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-//Start the TrackerService//
 
-    private void startTrackerService() {
-        startService(new Intent(this, TrackingService.class));
-
-//Notify the user that tracking has been enabled//
-
-        Toast.makeText(this, "GPS tracking enabled", Toast.LENGTH_SHORT).show();
-
-//Close MainActivity//
-
-        finish();
+    //essa classe quando roda fica fazendo a request a cada 5 segundos
+    public class ThreadVerificarPedidos extends Thread {
+        public ThreadVerificarPedidos() {}
+        @Override
+        public void run() {
+            while(true){
+                new HomeCaminhoneiroActivity.RequestVerificarPedidos().execute();
+                SystemClock.sleep(5000);
+            }
+        }
     }
+
+    //request que retorna os pedidos (na teoria)
+    private class RequestVerificarPedidos extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            //botar a url de verificar os pedidos
+            String url = "http://achai.herokuapp.com/clientes/";
+            return Conexao.teste(url);
+        }
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Log.i("Erro: ","erro");
+            }
+            else{
+                //AQUI ELE PEGA O RETORNO DA REQUEST DOS PEDIDOS, MANDAR PRA LISTVIEW
+                Log.i("sucesso",result);
+            }
+        }
+    }
+
 }

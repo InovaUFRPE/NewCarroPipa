@@ -57,8 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validar();/*
-                Intent it = new Intent(LoginActivity.this,HomeFisicaActivity.class);
+                validar();
+                /*Intent it = new Intent(LoginActivity.this,MapsActivity.class);
                 finish();
                 startActivity(it);*/
             }
@@ -89,15 +89,10 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //Checking the cadastro code of our cadastro
         if (requestCode == NOTIFICATION_PERMISSION_CODE ) {
-
-            //If permission is granted
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Displaying a toast
                 Toast.makeText(this, "Permission granted now you can read the storage", Toast.LENGTH_LONG).show();
             } else {
-                //Displaying another toast if permission is not granted
                 Toast.makeText(this, "Oops you just denied the permission", Toast.LENGTH_LONG).show();
             }
         }
@@ -135,13 +130,11 @@ public class LoginActivity extends AppCompatActivity {
         json.put("email",edtLogin.getText().toString());
         json.put("senha",edtSenha.getText().toString());
         url = "http://api-carro-pipa.herokuapp.com/login";
-
         if (swtTipo.isChecked()){
             json.put("tipopessoa","motorista");
         } else {
             json.put("tipopessoa","cliente");
         }
-
         new Request().execute();
     }
 
@@ -152,13 +145,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result){
-            //Log.i("resultado",result);
             if (result.equals("NOT FOUND")){
-                try {
-                    Toast.makeText(LoginActivity.this, json.getString("tipopessoa"), Toast.LENGTH_SHORT).show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Toast.makeText(LoginActivity.this, "Informações incorretas", Toast.LENGTH_SHORT).show();
             }
             else{
                 Bundle bundle = new Bundle();

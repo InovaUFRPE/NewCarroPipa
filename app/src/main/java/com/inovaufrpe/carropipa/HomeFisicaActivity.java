@@ -1,5 +1,7 @@
 package com.inovaufrpe.carropipa;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -9,15 +11,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.inovaufrpe.carropipa.utils.Conexao;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class HomeFisicaActivity extends AppCompatActivity {
@@ -34,6 +42,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
 
     private JSONObject usuario;
     private JSONObject cliente;
+    private JSONObject pedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +95,11 @@ public class HomeFisicaActivity extends AppCompatActivity {
         btnFazerPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createDialog();
+                confirmarSolicitacao();
             }
         });
+
+
     }
 
     public void recuperaInformacoes() throws Exception{
@@ -110,14 +121,36 @@ public class HomeFisicaActivity extends AppCompatActivity {
         }
     }
 
-    private void createDialog(){
-        final Integer valor = sbLitros.getProgress();
+    private void confirmarSolicitacao(){
+        pedido = new JSONObject();
+        final Integer qtd = sbLitros.getProgress()*1000;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Você deseja confirmar o pedido de " + valor.toString() + " litros de água?");
+        builder.setTitle("Você deseja confirmar o pedido de " + qtd.toString() + " litros de água?");
+
+        //mostra a opção de destino, se n quiser só comentar
+        CharSequence[] itens = {"Localização atual", "Endereço Cadastrado"};
+        builder.setSingleChoiceItems( itens, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
         builder.setPositiveButton("confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                solicitarCaminhao(valor);
+                try {
+                    pedido.put("checkin",null);
+                    pedido.put("id_pessoa_cli",Integer.parseInt(cliente.getString("id_pessoa")));
+                    pedido.put("id_pessoa_mot",null);
+                    pedido.put("valor",qtd);
+                    pedido.put("datahora",null);
+                    pedido.put("imediatoprogramado",null);
+                    pedido.put("confirmaprogramado",null);
+                    // ta null pq algumas infos vão ser preenchidas quando o motorista aceitar
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                solicitar(pedido);
             }
         });
         builder.setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
@@ -130,9 +163,12 @@ public class HomeFisicaActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void solicitarCaminhao(Integer litros){
-        Toast.makeText(this, litros.toString(), Toast.LENGTH_SHORT).show();
+
+    private void solicitar(JSONObject pedido){
+        //aqui chamaria a função request pedido que ia
     }
+
+
 
     private class RequestRecupera extends AsyncTask<Void, Void, String> {
         @Override
@@ -157,6 +193,23 @@ public class HomeFisicaActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private class RequestPedido extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            String url = "http://api-carro-pipa.herokuapp.com/pedidos/";
+            return Conexao.pedido(url,pedido);
+
+        }
+        protected void onPostExecute(String result){
+            Log.i("res: ",result);
+            if (result.equals("NOT FOUND")){
+            }else {
+
+            }
+
         }
     }
 }

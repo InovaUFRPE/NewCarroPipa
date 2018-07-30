@@ -31,10 +31,11 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/txtViewOla"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato_black"
-                    android:text="Olá, Lourenço."
+                    android:text="Olá"
                     android:textColor="@color/dark"
                     android:textSize="36sp" />
 
