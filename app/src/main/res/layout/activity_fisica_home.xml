@@ -82,6 +82,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/LLpedido"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -90,10 +91,63 @@
             android:padding="16dp">
 
             <LinearLayout
+                android:id="@+id/LyPedidoFeito"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Pedido atual"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvQtd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="0 Litros"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/tvPreço"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="R$00,00 + taxa de entrega"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="Status: Aguardando um motorista"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/btnCancelarPedido2"
+                    style="@style/ButtonPrimary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:paddingHorizontal="25dp"
+                    android:paddingVertical="4dp"
+                    android:text="Cancelar solicitação"
+                    android:textAllCaps="false" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:id="@+id/lyPedirAgua"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -116,10 +170,10 @@
 
             <LinearLayout
                 android:id="@+id/lySeekBarLitros"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -134,9 +188,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="50"
-                    android:progress="1"
                     android:min="1"
-                    android:paddingVertical="10dp" />
+                    android:paddingVertical="10dp"
+                    android:progress="1" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -153,11 +207,11 @@
                         android:id="@+id/textViewlitros"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
+                        android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="0dp"
                         android:layout_marginBottom="0dp"
+                        android:layout_marginTop="0dp"
                         android:text="1000 Litros"
                         android:textColor="@color/accent"
                         android:textSize="18sp" />
@@ -192,8 +246,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
-                        android:layout_marginTop="0dp"
                         android:layout_marginRight="16dp"
+                        android:layout_marginTop="0dp"
                         android:layout_toStartOf="@+id/btnPedirAgua"
                         android:background="@color/transparent"
                         android:fontFamily="@font/lato_black"

@@ -57,10 +57,10 @@ public class LoginActivity extends AppCompatActivity {
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //validar();
-                Intent it = new Intent(LoginActivity.this,MapsActivity.class);
+                validar();
+                /*Intent it = new Intent(LoginActivity.this,MapsActivity.class);
                 finish();
-                startActivity(it);
+                startActivity(it);*/
             }
         });
 

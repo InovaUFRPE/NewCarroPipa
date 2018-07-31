@@ -121,7 +121,7 @@ public class Conexao {
             streamWriter.flush();
 
             StringBuilder stringBuilder = new StringBuilder();
-            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_CREATED){
                 InputStreamReader streamReader = new InputStreamReader(urlConnection.getInputStream());
                 BufferedReader bufferedReader = new BufferedReader(streamReader);
                 String response = null;
@@ -131,7 +131,6 @@ public class Conexao {
                 bufferedReader.close();
                 return stringBuilder.toString();
             } else {
-                Log.i("teste1", String.valueOf(urlConnection.getErrorStream()));
                 return urlConnection.getResponseMessage();
             }
         } catch (Exception e) {

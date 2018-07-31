@@ -88,19 +88,19 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         @Override
         public void run() {
             while(true){
-                //new HomeCaminhoneiroActivity.RequestVerificarPedidos().execute();
+                new HomeCaminhoneiroActivity.RequestVerificarPedidos().execute();
                 SystemClock.sleep(5000);
             }
         }
     }
 
-    /*request que retorna os pedidos (na teoria)
+    //request que retorna os pedidos (na teoria)
     private class RequestVerificarPedidos extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
             //botar a url de verificar os pedidos
-            String url = "http://achai.herokuapp.com/clientes/";
-            return Conexao.teste(url);
+            String url = "http://achai.herokuapp.com/pedidos/";
+            return Conexao.recuperainfo(url);
         }
         protected void onPostExecute(String result){
             if (result.equals("NOT FOUND")){
@@ -111,6 +111,6 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
                 Log.i("sucesso",result);
             }
         }
-    }*/
+    }
 
 }

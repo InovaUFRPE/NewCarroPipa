@@ -7,7 +7,7 @@
 
 
     <TextView
-        android:id="@+id/pedido"
+        android:id="@+id/LLpedido"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
@@ -20,8 +20,8 @@
         android:id="@+id/status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/pedido"
-        android:layout_below="@+id/pedido"
+        android:layout_alignStart="@+id/LLpedido"
+        android:layout_below="@+id/LLpedido"
         android:layout_marginTop="10dp"
         android:text="comment" />
 
