@@ -465,7 +465,7 @@ def motorista_add(email,senha,nomerazaosocial,foto,telefone,tipopessoa,cpfcnpj,l
         db.session.add(k)
         db.session.commit()
     else:
-        return {'sucesso':False, 'mensagem':'motorista inexistente.'}
+        return {'sucesso':False, 'mensagem':'motorista ja existe.'}
 
     return {'sucesso':True, 'mensagem':'motorista cadastrado com sucesso.'}#,'id_pessoa':k.id_pessoa,'cpfcnpj':i.cpfcnpj,'email':h.email}
 
@@ -794,20 +794,7 @@ def loginUsuario():
         some_json = request.get_json()
         if 'email' not in some_json or 'senha' not in some_json or 'tipopessoa' not in some_json:
             return jsonify({'sucesso':False,'mensagem':'Parâmetro(s) faltando no Json'}), 404
-        '''
-        g = Usuario.query.filter(Usuario.email == some_json['email']).first()
 
-        if g == None:
-            return jsonify({'sucesso':False,'mensagem':'Usuário não cadastrado'}), 404
-        if g.senha != some_json['senha']:
-            return jsonify({'sucesso':False,'mensagem':'Senha não confere'}), 404
-
-        p = Pessoa.query.filter(Pessoa.id_pessoa == g.id_usuario).first()
-        if p == None:
-            return jsonify({'sucesso':False,'mensagem':'Usuário não foi cadastrado corretamente'}), 404
-        
-        g = {'sucesso':True,'mensagem':'Logado com sucesso','email':some_json['email']}
-        '''
         g = login(some_json['email'],some_json['senha'], some_json['tipopessoa'])
 
         if g['sucesso'] == False:
@@ -815,42 +802,87 @@ def loginUsuario():
         else:
             return jsonify(g), 200
 
-# Localizacao
 
-def addLocalizacao(lat,lng,id_pessoa):
-    i = Localizacao(lat, lng, id_pessoa)
-    db.session.add(i)
+'''----------------------------Localizacao--------------------------------'''
+
+def localizacao_add(id_pessoa, latitude, longitude):
+    i = Localizacao.query.filter(Localizacao.id_pessoa == id_pessoa).first()
+    if i == None:
+        i = Localizacao(id_pessoa, latitude, longitude)
+        db.session.add(i)
+        db.session.commit()
+    else:
+        return {'sucesso':False, 'mensagem':'inexistente.'}
+
+    return {'sucesso':True, 'mensagem':'localizacao do cadastrada com sucesso.'}
+
+def localizacao_delete(id_pessoa):
+    d = Localizacao.query.get(id_pessoa)
+    if d == None:
+        return {'sucesso':False, 'mensagem':'localizacao do não existe.'}
+
+    db.session.delete(d)
+
+    return {'sucesso':True, 'mensagem':'localizacao do removida com sucesso.'}
+
+def localizacao_get(id_pessoa):
+    g = Localizacao.query.get(id_pessoa)
+    if g == None:
+        return {'sucesso':False, 'mensagem':'localizacao do não existe.'}
+
+    return {'sucesso':True,'mensagem':'localizacao do retornada com sucesso.','id_pessoa':g.id_pessoa,'latitude':g.latitude,'longitude':g.longitude}
+
+def localizacao_update(id_pessoa, latitude, longitude):
+    u = Localizacao.query.get(id_pessoa)
+    u.latitude = latitude
+    u.longitude = longitude
     db.session.commit()
-    return True
+    return "localizacao \"" + str(u.id_pessoa) + "\" alterada com sucesso!"
 
-def getLocalizacao(idP):
-    g = Localizacao.query.get(idP)
-    return {"id_pessoa": g.id_pessoa,"latitude": g.latitude,"longitude": g.longitude}
+def atualizarLocalizacao(id_pessoa, latitude, longitude):
+    result = validarIntegridade(id_pessoa, latitude, longitude)
+    
+    if result['sucesso'] is False:
+        return result
+        
+    g = Localizacao.query.filter(Localizacao.id_pessoa == id_pessoa).first()
+    
+    if g == None:
+        localizacao_add(id_pessoa, latitude, longitude)        
+    else:
+        localizacao_update(id_pessoa, latitude, longitude)
 
-def putLocalizacao(idP,lat,lng):
-    u = Localizacao.query.filter(Localizacao.id_pessoa == idP).first()
-    u.latitude = lat
-    u.longitude = lng
-    db.session.commit()
-    return True
+    return {'sucesso':True, 'mensagem':'localizacao do atualizada com sucesso.'}
+    
+def validarIntegridade(id_pessoa, latitude, longitude):
+    if id_pessoa == None or id_pessoa == '':
+        return {'sucesso':False,'mensagem':'motorista em branco.'}
+    if latitude == None or longitude == None or latitude == '' or longitude == '':
+        return {'sucesso':False, 'mensagem':'localizacao em branco'}
+    return {'sucesso':True}
 
-@app.route("/localizacoes/<id_pessoa>",methods=['GET'])
-@app.route("/localizacoes", defaults={'id_pessoa': None}, methods=['POST','PUT'])
+@app.route("/localizacoes/<id_pessoa>",methods=['GET','DELETE'])
+@app.route("/localizacoes/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/localizacoes", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
 def localizacao(id_pessoa):
-    if (request.method == 'POST'):
+    if (request.method == 'POST' or request.method == 'PUT'):
         some_json = request.get_json()
-        if addLocalizacao(some_json['latitude'],some_json['longitude'],some_json['id_pessoa']):
-            return jsonify({'sucesso':True}), 201
-        return jsonify({'sucesso':False}), 400
+        g = atualizarLocalizacao(some_json['id_pessoa'],some_json['latitude'], some_json['longitude'])
+
+        if g['sucesso'] == False:
+            return jsonify(g), 404
+        else:
+            return jsonify(g), 200
+
+    elif (request.method == 'DELETE'):
+        some_json = request.get_json()
+        result =localizacao_delete(id_pessoa)
+        if result['sucesso']:
+            return jsonify(result), 202
+        return jsonify(result), 400
 
     elif (request.method == 'GET'):
-        result = getLocalizacao(id_pessoa)
-        if result:
-            return jsonify({'sucesso':True, 'id_pessoa':result['id_pessoa'],'latitude':result['latitude'],'longitude':result['longitude']}), 200
-        return jsonify({'sucesso':False})
-    
-    elif (request.method == 'PUT'):
-        some_json = request.get_json()
-        if putLocalizacao(some_json['id_pessoa'], some_json['latitude'],some_json['longitude']):
-            return jsonify({'sucesso':True}), 204
-        return jsonify({'sucesso':False}), 400
+        result = localizacao_get(id_pessoa)
+        if result['sucesso']:
+            return jsonify(result), 200
+        return jsonify(result), 400
