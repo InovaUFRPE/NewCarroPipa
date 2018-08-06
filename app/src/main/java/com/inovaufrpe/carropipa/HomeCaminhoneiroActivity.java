@@ -23,6 +23,7 @@ import com.inovaufrpe.carropipa.adapter.PedidosAdapter;
 import com.inovaufrpe.carropipa.model.Pedido;
 import com.inovaufrpe.carropipa.utils.Conexao;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,9 +57,6 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         Thread t = new ThreadVerificarPedidos();
         t.start();
         ArrayList<Pedido> ar = new ArrayList<Pedido>();
-        for (int i = 0; i < 3; i++) {
-            ar.add(new Pedido(i+1,2,3, 145455544, 1.2, 1.2, "asdasd",true, false));
-        }
         initRecycler(ar);
     }
 
@@ -124,10 +122,46 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
             }
             else{
                 //AQUI ELE PEGA O RETORNO DA REQUEST DOS PEDIDOS, MANDAR PRA LISTVIEW
-                Log.i("sucesso",result);
-//                for ()
+                Log.i("sucesso", result);
+
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    initRecycler(criaLista(jsonArray));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
+    }
+
+    private ArrayList<Pedido> criaLista(JSONArray jsonArray){
+        ArrayList<Pedido> list = new ArrayList<Pedido>();
+        for(int i = 0; i<jsonArray.length(); i++){
+            try {
+                JSONObject pedido = jsonArray.getJSONObject(i);
+                // pegar endereco com base no pedido.getString("checkIn")
+
+
+                list.add(new Pedido(
+                        pedido.getInt("id_pedido"),
+                        pedido.getInt("id_pessoa_cli"),
+                        pedido.getInt("id_pessoa_mot"),
+                        pedido.getInt("dataHora"),
+                        pedido.getDouble("valor"),
+                        pedido.getDouble("valorFrete"),
+                        "",
+                        pedido.getBoolean("imediatoProgramado"),
+                        pedido.getBoolean("confirmadoProgramado")
+                        )
+                );
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return list;
     }
 
     private void initRecycler (ArrayList pedidos) {
