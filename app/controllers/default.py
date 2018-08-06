@@ -606,33 +606,28 @@ def pedidonaoaceito(id_pessoa_cli):
         return jsonify({'sucesso':False})
 
 
-'''----------------------------Pedidos Nao Aceitos Ainda--------------------------------'''
-'''
-def ultimoPedidoSemPagto(id_pessoa_cli):
-    print('entrei: ' + str(g.id_pessoa_cli))
+'''----------------------------Pedidos Em Aberto--------------------------------'''
+
+def pedidoemaberto_get(id_pessoa_cli):
     g = Pedido.query.filter(Pedido.id_pessoa_cli == id_pessoa_cli).order_by(Pedido.id_pedido.desc()).first()
-    if  g == None:
-        print('não existe pedido para o cliente: ' + str(g.id_pedido))
-        return {'sucesso':False, 'mensagem':'não existe pedido para o cliente: ' + str(g.id_pedido)}
+    if g == None:
+        return {"id_pedido": 0,"id_pessoa_cli": 0,"id_pessoa_mot": 0,"valor": 0,"dataHora": 0,"checkIn": "0","imediatoProgramado": False,"confirmadoProgramado": False,"valorFrete": 0}
     h = Pagamento.query.filter(Pagamento.id_pedido == g.id_pedido).first()
     if  h == None:
-        print('não existe pagamento para o pedido: ' + str(g.id_pedido))
-        return {'sucesso':True, 'mensagem':'não existe pagamento para o pedido: ' + str(g.id_pedido)}
+        return {"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete}
     else:
-        print('existe pagamento para o pedido: ' + str(g.id_pedido))
-        return {'sucesso':False, 'mensagem':'existe pagamento para o pedido: ' + str(g.id_pedido)}
+        return {"id_pedido": 0,"id_pessoa_cli": 0,"id_pessoa_mot": 0,"valor": 0,"dataHora": 0,"checkIn": "0","imediatoProgramado": False,"confirmadoProgramado": False,"valorFrete": 0}
 
-@app.route("/pedidosaberto/<id_pessoa_cli>",methods=['GET'])
-@app.route("/pedidosaberto/", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/pedidosaberto", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
-def pedidoaberto(id_pessoa_cli):
+@app.route("/pedidosemaberto/<id_pessoa_cli>",methods=['GET'])
+@app.route("/pedidosemaberto/", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pedidosemaberto", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
+def pedidoemaberto(id_pessoa_cli):
     if (request.method == 'GET'):
-        print('entrei antes: ')
-        result = ultimoPedidoSemPagto(id_pessoa_cli)
+        result = pedidoemaberto_get(id_pessoa_cli)
         if result:
-            return jsonify({'sucesso':True})
+            return jsonify({'sucesso':True, 'id_pedido':result['id_pedido'], 'id_pessoa_cli':result['id_pessoa_cli'],'id_pessoa_mot':result['id_pessoa_mot'],'valor':result['valor'],'dataHora':result['dataHora'],'checkIn':result['checkIn'],'imediatoProgramado':result['imediatoProgramado'],'confirmadoProgramado':result['confirmadoProgramado'],'valorFrete':result['valorFrete']})
         return jsonify({'sucesso':False})
-'''
+
 
 '''----------------------------Ranking--------------------------------'''
 
