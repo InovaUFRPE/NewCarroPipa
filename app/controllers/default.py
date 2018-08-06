@@ -576,8 +576,8 @@ def pedido(id_pedido):
     elif (request.method == 'GET'):
         result = pedido_get(id_pedido)
         if result:
-            return jsonify({'sucesso':True, 'id_pessoa_cli':result['id_pessoa_cli'],'id_pessoa_mot':result['id_pessoa_mot'],'valor':result['valor'],'dataHora':result['dataHora'],'checkIn':result['checkIn'],'imediatoProgramado':result['imediatoProgramado'],'confirmadoProgramado':result['confirmadoProgramado'],'valorFrete':result['valorFrete']})
-        return jsonify({'sucesso':False})
+            return jsonify({'sucesso':True, 'id_pessoa_cli':result['id_pessoa_cli'],'id_pessoa_mot':result['id_pessoa_mot'],'valor':result['valor'],'dataHora':result['dataHora'],'checkIn':result['checkIn'],'imediatoProgramado':result['imediatoProgramado'],'confirmadoProgramado':result['confirmadoProgramado'],'valorFrete':result['valorFrete']}), 200
+        return jsonify({'sucesso':False}), 400
     
     elif (request.method == 'PUT'):
         some_json = request.get_json()
@@ -588,22 +588,22 @@ def pedido(id_pedido):
 
 '''----------------------------Pedidos Nao Aceitos Ainda--------------------------------'''
 
-def pedidonaoaceito_get(id_pessoa_cli):
-    g = Pedido.query.filter(Pedido.id_pessoa_cli == id_pessoa_cli, Pedido.id_pessoa_mot == 0).all()
-    if g == None:
-        return {"id_pedido": 0,"id_pessoa_cli": 0,"id_pessoa_mot": 0,"valor": 0,"dataHora": 0,"checkIn": "0","imediatoProgramado": False,"confirmadoProgramado": False,"valorFrete": 0}
+def pedidonaoaceito_get():
+    peds = Pedido.query.filter(Pedido.id_pessoa_mot == 0).all()
+    listaPedsNaoAceitos = []
+    for g in peds:
+        listaPedsNaoAceitos.append({"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete})
+    return listaPedsNaoAceitos
 
-    return {"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete}
 
-@app.route("/pedidosnaoaceitos/<id_pessoa_cli>",methods=['GET'])
-@app.route("/pedidosnaoaceitos/", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/pedidosnaoaceitos", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
-def pedidonaoaceito(id_pessoa_cli):
+@app.route("/pedidosnaoaceitos/", methods=['POST','GET','DELETE','PUT'])
+@app.route("/pedidosnaoaceitos", methods=['POST','GET','DELETE','PUT'])
+def pedidonaoaceito():
     if (request.method == 'GET'):
-        result = pedidonaoaceito_get(id_pessoa_cli)
+        result = pedidonaoaceito_get()
         if result:
-            return jsonify({'sucesso':True, 'id_pedido':result['id_pedido'], 'id_pessoa_cli':result['id_pessoa_cli'],'id_pessoa_mot':result['id_pessoa_mot'],'valor':result['valor'],'dataHora':result['dataHora'],'checkIn':result['checkIn'],'imediatoProgramado':result['imediatoProgramado'],'confirmadoProgramado':result['confirmadoProgramado'],'valorFrete':result['valorFrete']})
-        return jsonify({'sucesso':False})
+            return jsonify(result), 200
+        return jsonify(result), 400
 
 
 '''----------------------------Pedidos Em Aberto--------------------------------'''
