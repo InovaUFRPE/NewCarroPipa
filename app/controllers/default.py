@@ -232,7 +232,7 @@ def cliente_add(email,senha,nomerazaosocial,foto,telefone,tipopessoa,cpfcnpj,log
     
     i = Pessoa.query.filter(Pessoa.id_usuario == h.id_usuario).first()
     if i == None:
-        i = Pessoa(nomerazaosocial,foto,telefone,h.id_usuario,tipopessoa,cpfcnpj,1000)
+        i = Pessoa(nomerazaosocial,foto,telefone,h.id_usuario,tipopessoa,cpfcnpj,5000)
         db.session.add(i)
         #db.session.commit()
 
