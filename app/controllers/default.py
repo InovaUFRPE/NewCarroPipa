@@ -256,7 +256,7 @@ def cliente_delete(id_pessoa):
     d = Cliente.query.get(id_pessoa)
     if d == None:
         return {'sucesso':False, 'mensagem':'cliente não existe.'}
-
+    
     e = Pessoa.query.get(d.id_pessoa)
     f = Usuario.query.get(e.id_usuario)
     p = Endereco.query.get(d.id_pessoa)
@@ -521,12 +521,17 @@ def motorista(id_pessoa):
 
 
 '''----------------------------Pedido--------------------------------'''
+import datetime as dt
+def pedido_add(id_pessoa_cli,id_pessoa_mot,valor,dataHora,checkIn,imediatoProgramado,confirmadoProgramado,valorFrete):
+    #if ultimoPedidoSemPagto(id_pessoa_cli):
+    #    return "Não pode abrir um novo pedido com um em andamento"        
 
-def pedido_add(id_pessoa_cli,id_pessoa_mot,valor,datahora,checkin,imediatoprogramado,confirmaprogramado):
-    i = Pedido(id_pessoa_cli,id_pessoa_mot,valor,datahora,checkin,imediatoprogramado,confirmaprogramado)
+    i = Pedido(id_pessoa_cli,id_pessoa_mot,valor,dataHora,checkIn,imediatoProgramado,confirmadoProgramado,valorFrete)
     db.session.add(i)
     db.session.commit()
-    return "Pedido \"" + str(i.id_pedido) + "\" incluido com sucesso!"
+    j = Pedido.query.filter().order_by(Pedido.id_pedido.desc()).first()
+    print('pedido: ' + str(j.id_pedido))
+    return {"id_pedido": j.id_pedido}
 
 def pedido_delete(id_pedido):
     d = Pedido.query.get(id_pedido)
@@ -536,17 +541,18 @@ def pedido_delete(id_pedido):
 
 def pedido_get(id_pedido):
     g = Pedido.query.get(id_pedido)
-    return {"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"datahora": g.dataHora,"checkin": g.checkIn,"imediatoprogramado": g.imediatoProgramado,"confirmaprogramado": g.confirmadoProgramado}
+    return {"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete}
 
-def pedido_update(id_pedido,id_pessoa_cli,id_pessoa_mot,valor,datahora,checkin,imediatoprogramado,confirmaprogramado):
+def pedido_update(id_pedido,id_pessoa_cli,id_pessoa_mot,valor,dataHora,checkIn,imediatoProgramado,confirmadoProgramado,valorFrete):
     u = Pedido.query.get(id_pedido)
     u.id_pessoa_cli = id_pessoa_cli
     u.id_pessoa_mot = id_pessoa_mot
     u.valor = valor
-    u.datahora = datahora
-    u.checkin = checkin
-    u.imediatoprogramado = imediatoprogramado
-    u.confirmaprogramado = confirmaprogramado
+    u.dataHora = dataHora
+    u.checkIn = checkIn
+    u.imediatoProgramado = imediatoProgramado
+    u.confirmadoProgramado = confirmadoProgramado
+    u.valorFrete = valorFrete
     db.session.commit()
     return "Pedido \"" + str(u.id_pedido) + "\" alterado com sucesso!"
 
@@ -556,8 +562,9 @@ def pedido_update(id_pedido,id_pessoa_cli,id_pessoa_mot,valor,datahora,checkin,i
 def pedido(id_pedido):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        if pedido_add(some_json['id_pessoa_cli'],some_json['id_pessoa_mot'],some_json['valor'],some_json['datahora'],some_json['checkin'],some_json['imediatoprogramado'],some_json['confirmaprogramado']):
-            return jsonify({'sucesso':True}), 201
+        result = pedido_add(some_json['id_pessoa_cli'],some_json['id_pessoa_mot'],some_json['valor'],some_json['dataHora'],some_json['checkIn'],some_json['imediatoProgramado'],some_json['confirmadoProgramado'],some_json['valorFrete'])
+        if result:
+            return jsonify({'sucesso':True, 'id_pedido':result['id_pedido']}), 201
         return jsonify({'sucesso':False}), 400
 
     elif (request.method == 'DELETE'):
@@ -569,16 +576,41 @@ def pedido(id_pedido):
     elif (request.method == 'GET'):
         result = pedido_get(id_pedido)
         if result:
-            return jsonify({'sucesso':True, 'id_pessoa_cli':result['id_pessoa_cli'],'id_pessoa_mot':result['id_pessoa_mot'],'valor':result['valor'],'datahora':result['datahora'],'checkin':result['checkin'],'imediatoprogramado':result['imediatoprogramado'],'confirmaprogramado':result['confirmaprogramado']})
+            return jsonify({'sucesso':True, 'id_pessoa_cli':result['id_pessoa_cli'],'id_pessoa_mot':result['id_pessoa_mot'],'valor':result['valor'],'dataHora':result['dataHora'],'checkIn':result['checkIn'],'imediatoProgramado':result['imediatoProgramado'],'confirmadoProgramado':result['confirmadoProgramado'],'valorFrete':result['valorFrete']})
         return jsonify({'sucesso':False})
     
     elif (request.method == 'PUT'):
         some_json = request.get_json()
-        if pedido_update(some_json['id_pedido'],some_json['id_pessoa_cli'],some_json['id_pessoa_mot'],some_json['valor'],some_json['datahora'],some_json['checkin'],some_json['imediatoprogramado'],some_json['confirmaprogramado']):
+        if pedido_update(some_json['id_pedido'],some_json['id_pessoa_cli'],some_json['id_pessoa_mot'],some_json['valor'],some_json['dataHora'],some_json['checkIn'],some_json['imediatoProgramado'],some_json['confirmadoProgramado'],some_json['valorFrete']):
             return jsonify({'sucesso':True}), 200
         return jsonify({'sucesso':False}), 400
 
+'''
+def ultimoPedidoSemPagto(id_pessoa_cli):
+    print('entrei: ' + str(g.id_pessoa_cli))
+    g = Pedido.query.filter(Pedido.id_pessoa_cli == id_pessoa_cli).order_by(Pedido.id_pedido.desc()).first()
+    if  g == None:
+        print('não existe pedido para o cliente: ' + str(g.id_pedido))
+        return {'sucesso':False, 'mensagem':'não existe pedido para o cliente: ' + str(g.id_pedido)}
+    h = Pagamento.query.filter(Pagamento.id_pedido == g.id_pedido).first()
+    if  h == None:
+        print('não existe pagamento para o pedido: ' + str(g.id_pedido))
+        return {'sucesso':True, 'mensagem':'não existe pagamento para o pedido: ' + str(g.id_pedido)}
+    else:
+        print('existe pagamento para o pedido: ' + str(g.id_pedido))
+        return {'sucesso':False, 'mensagem':'existe pagamento para o pedido: ' + str(g.id_pedido)}
 
+@app.route("/pedidosaberto/<id_pessoa_cli>",methods=['GET'])
+@app.route("/pedidosaberto/", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pedidosaberto", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
+def pedidoaberto(id_pessoa_cli):
+    if (request.method == 'GET'):
+        print('entrei antes: ')
+        result = ultimoPedidoSemPagto(id_pessoa_cli)
+        if result:
+            return jsonify({'sucesso':True})
+        return jsonify({'sucesso':False})
+'''
 '''----------------------------Ranking--------------------------------'''
 
 def ranking_add(id_pessoa_deu,id_pedido,nota,comentario):
@@ -688,8 +720,8 @@ def formapagto(id_formapagto):
 
 '''----------------------------Pagamento--------------------------------'''
 
-def pagamento_add(id_formapagto,valor,id_pedido,datahora):
-    i = Pagamento(id_formapagto,valor,id_pedido,datahora)
+def pagamento_add(id_formapagto,valor,id_pedido,dataHora):
+    i = Pagamento(id_formapagto,valor,id_pedido,dataHora)
     db.session.add(i)
     db.session.commit()
     return "Pagamento \"" + str(i.id_pagamento) + "\" incluido com sucesso!"
@@ -704,12 +736,16 @@ def pagamento_get(id_pagamento):
     g = Pagamento.query.get(id_pagamento)
     return "Pagamento \"" + str(g.id_pagamento)
 
-def pagamento_update(id_pagamento,id_formapagto,valor,id_pedido,datahora):
+def pagamentoPedido_get(id_pedido):
+    g = Pagamento.query.get(id_pedido)
+    return "Pedido tem pagamento \"" + str(g.id_pagamento)
+
+def pagamento_update(id_pagamento,id_formapagto,valor,id_pedido,dataHora):
     u = Pagamento.query.get(id_pagamento)
     u.id_formapagto = id_formapagto
     u.valor = valor
     u.id_pedido = id_pedido
-    u.datahora = datahora
+    u.dataHora = dataHora
     db.session.commit()
     return "Pagamento \"" + str(u.id_pagamento) + "\" alterado com sucesso!"
 
@@ -719,7 +755,7 @@ def pagamento_update(id_pagamento,id_formapagto,valor,id_pedido,datahora):
 def pagamento(id_pagamento):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        if pagamento_add(some_json['id_formapagto'],some_json['valor'],some_json['id_pedido'],some_json['datahora']):
+        if pagamento_add(some_json['id_formapagto'],some_json['valor'],some_json['id_pedido'],some_json['dataHora']):
             return jsonify({'sucesso':True}), 201
         return jsonify({'sucesso':False}), 400
 
@@ -730,14 +766,14 @@ def pagamento(id_pagamento):
         return jsonify({'sucesso':False}), 400
 
     elif (request.method == 'GET'):
-        result = pagamento_get(id_pagamento)
+        result = pagamentoPedido_get(id_pedido)
         if result:
             return jsonify({'sucesso':True, 'id_pagamento':result['id_formapagto'],'descricao':result['descricao']})
         return jsonify({'sucesso':False})
     
     elif (request.method == 'PUT'):
         some_json = request.get_json()
-        if pagamento_update(some_json['id_pagamento'],some_json['id_formapagto'],some_json['valor'],some_json['id_pedido'],some_json['datahora']):
+        if pagamento_update(some_json['id_pagamento'],some_json['id_formapagto'],some_json['valor'],some_json['id_pedido'],some_json['dataHora']):
             return jsonify({'sucesso':True}), 200
         return jsonify({'sucesso':False}), 400
 

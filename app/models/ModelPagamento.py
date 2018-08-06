@@ -7,7 +7,7 @@ class Pagamento(db.Model):
     id_formapagto = db.Column(db.Integer, db.ForeignKey('formapagto.id_formapagto'))
     valor = db.Column(db.Float)
     id_pedido = db.Column(db.Integer, db.ForeignKey('pedido.id_pedido'))
-    dataHora = db.Column(db.DateTime)
+    dataHora = db.Column(db.Integer)
 
     formapagto = db.relationship('FormaPagto', foreign_keys=id_formapagto)
     pedido = db.relationship('Pedido', foreign_keys=id_pedido)

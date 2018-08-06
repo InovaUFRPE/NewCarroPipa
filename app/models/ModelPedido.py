@@ -9,13 +9,14 @@ class Pedido(db.Model):
     valor = db.Column(db.Float)
     dataHora = db.Column(db.Integer)
     checkIn = db.Column(db.String)
-    imediatoProgramado = db.Column(db.String)
-    confirmadoProgramado = db.Column(db.String)
+    imediatoProgramado = db.Column(db.Boolean)
+    confirmadoProgramado = db.Column(db.Boolean)
+    valorFrete = db.Column(db.Float)
 
     cliente = db.relationship('Cliente', foreign_keys=id_pessoa_cli)
     motorista = db.relationship('Motorista', foreign_keys=id_pessoa_mot)
 
-    def __init__(self, id_pessoa_cli, id_pessoa_mot, valor, dataHora, checkIn, imediatoProgramado, confirmadoProgramado):
+    def __init__(self, id_pessoa_cli, id_pessoa_mot, valor, dataHora, checkIn, imediatoProgramado, confirmadoProgramado, valorFrete):
         self.id_pessoa_cli = id_pessoa_cli
         self.id_pessoa_mot = id_pessoa_mot
         self.valor = valor
@@ -23,6 +24,7 @@ class Pedido(db.Model):
         self.checkIn = checkIn
         self.imediatoProgramado = imediatoProgramado
         self.confirmadoProgramado = confirmadoProgramado
+        self.valorFrete = valorFrete
 
     def __repr__(self):
         return "<Pedido %r>" % self.id_pessoa_cli
