@@ -5,14 +5,19 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 public class MapsActivity extends AppCompatActivity {
 
@@ -20,20 +25,60 @@ public class MapsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
+        checkPermission();
+        //getCurrentLocation();
+        MapView mMap = (MapView) findViewById(R.id.mapaId);
+
+        getCurrentLocation();
+        mMap.setTileSource(TileSourceFactory.MAPNIK);
+        mMap.getController().setCenter(new GeoPoint(-7.082433, -41.468516));
+        mMap.getController().setZoom(15);
+        Marker marcador = new Marker(mMap);
+        marcador.setPosition(new GeoPoint(-7.082433, -41.468516));
+        mMap.getOverlays().add(marcador);
+    }
+
+    public void getCurrentLocation(){
+        boolean fineLocation = ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean coarseLocation = ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean internet = ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
+        boolean exStorage = ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+        if(fineLocation && coarseLocation && internet && exStorage) {
+            MyLocationNewOverlay myLocation = new MyLocationNewOverlay(mMap);
+            myLocation.enableFollowLocation();
+            myLocation.enableMyLocation();
+            mMap.getOverlays().add(myLocation);
+        }
+    }
+
+    public void checkPermission(){
+        boolean fineLocation = ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean coarseLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean internet = ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean exStorage = ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+            if (fineLocation || coarseLocation || internet || exStorage){
+                requestPermissions(permissoes,1);
+            }
+        }
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 requestPermissions(permissoes, 1);
             }
-        }
-        Context ctx = getApplicationContext();
-        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        setContentView(R.layout.activity_maps);
-        MapView mMap = (MapView) findViewById(R.id.mapaId);
-        //Fonte de imagens
-        mMap.setTileSource(TileSourceFactory.MAPNIK);
+        }*/
     }
 
     @Override
@@ -42,9 +87,7 @@ public class MapsActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1: {
                 // Se a solicitação de permissão foi cancelada o array vem vazio.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permissão cedida, recria a activity para carregar o mapa, só será executado uma vez
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     this.recreate();
 
                 }

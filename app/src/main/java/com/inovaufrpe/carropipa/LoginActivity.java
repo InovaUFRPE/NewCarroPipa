@@ -57,6 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                edtLogin.setText("cliente@gmail.com");
+                edtSenha.setText("123456");
                 validar();
                 /*Intent it = new Intent(LoginActivity.this,MapsActivity.class);
                 finish();
