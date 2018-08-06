@@ -31,6 +31,7 @@ public class PedidosAdapter extends RecyclerView.Adapter<PedidosListHolder> {
 
         //alterar para endereco real
         holder.endereco.setText(pedidos.get(position).checkin);
+        holder.idPedido.setText(String.valueOf(pedidos.get(position).idPedido));
 
 
     }
