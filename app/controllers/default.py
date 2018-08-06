@@ -589,15 +589,15 @@ def pedido(id_pedido):
 '''----------------------------Pedidos Nao Aceitos Ainda--------------------------------'''
 
 def pedidonaoaceito_get(id_pessoa_cli):
-    g = Pedido.query.filter(Pedido.id_pessoa_cli == id_pessoa_cli, Pedido.id_pessoa_mot == 0).order_by(Pedido.id_pedido.desc()).first()
+    g = Pedido.query.filter(Pedido.id_pessoa_cli == id_pessoa_cli, Pedido.id_pessoa_mot == 0).all()
     if g == None:
         return {"id_pedido": 0,"id_pessoa_cli": 0,"id_pessoa_mot": 0,"valor": 0,"dataHora": 0,"checkIn": "0","imediatoProgramado": False,"confirmadoProgramado": False,"valorFrete": 0}
 
     return {"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete}
 
-@app.route("/pedidosnaoaceito/<id_pessoa_cli>",methods=['GET'])
-@app.route("/pedidosnaoaceito/", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
-@app.route("/pedidosnaoaceito", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pedidosnaoaceitos/<id_pessoa_cli>",methods=['GET'])
+@app.route("/pedidosnaoaceitos/", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
+@app.route("/pedidosnaoaceitos", defaults={'id_pessoa_cli': None}, methods=['POST','GET','DELETE','PUT'])
 def pedidonaoaceito(id_pessoa_cli):
     if (request.method == 'GET'):
         result = pedidonaoaceito_get(id_pessoa_cli)
