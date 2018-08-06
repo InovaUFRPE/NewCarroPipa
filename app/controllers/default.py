@@ -89,11 +89,11 @@ def usuario(id_usuario):
 
 '''----------------------------Pessoa--------------------------------'''
 
-def pessoa_add(nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj):
-    i = Pessoa(nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj)
+def pessoa_add(nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj,dinheiro):
+    i = Pessoa(nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj,dinheiro)
     db.session.add(i)
     db.session.commit()
-    return {'sucesso':True, 'mensagem':'pessoa cadastrado com sucesso.','id_pessoa':i.id_pessoa,'nomerazaosocial':i.nomerazaosocial,'foto':i.foto,'telefone':i.telefone,'id_usuario':i.id_usuario,'tipopessoa':i.tipopessoa,'cpfcnpj':i.cpfcnpj}
+    return {'sucesso':True, 'mensagem':'pessoa cadastrado com sucesso.','id_pessoa':i.id_pessoa,'nomerazaosocial':i.nomerazaosocial,'foto':i.foto,'telefone':i.telefone,'id_usuario':i.id_usuario,'tipopessoa':i.tipopessoa,'cpfcnpj':i.cpfcnpj,'dinheiro':i.dinheiro}
 
 def pessoa_delete(id_pessoa):
     d = Pessoa.query.get(id_pessoa)
@@ -107,9 +107,9 @@ def pessoa_get(id_pessoa):
     g = Pessoa.query.get(id_pessoa)
     if g == None:
         return {'sucesso':False, 'mensagem':'pessoa não existe.'}
-    return {'sucesso':True,'mensagem':'pessoa retornada com sucesso.','id_pessoa':g.id_pessoa,'nomerazaosocial':g.nomerazaosocial,'foto':g.foto,'telefone':g.telefone,'id_usuario':g.id_usuario,'tipopessoa':g.tipopessoa,'cpfcnpj':g.cpfcnpj}
+    return {'sucesso':True,'mensagem':'pessoa retornada com sucesso.','id_pessoa':g.id_pessoa,'nomerazaosocial':g.nomerazaosocial,'foto':g.foto,'telefone':g.telefone,'id_usuario':g.id_usuario,'tipopessoa':g.tipopessoa,'cpfcnpj':g.cpfcnpj,'dinheiro':g.dinheiro}
 
-def pessoa_update(id_pessoa,nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj):
+def pessoa_update(id_pessoa,nomerazaosocial,foto,telefone,id_usuario,tipopessoa,cpfcnpj,dinheiro):
     u = Pessoa.query.get(id_pessoa)
     if u == None:
         return {'sucesso':False, 'mensagem':'pessoa não existe.'}
@@ -120,7 +120,7 @@ def pessoa_update(id_pessoa,nomerazaosocial,foto,telefone,id_usuario,tipopessoa,
     u.tipopessoa = tipopessoa
     u.cpfcnpj = cpfcnpj
     db.session.commit()
-    return {'sucesso':True,'mensagem':'pessoa atualizada com sucesso.','id_pessoa':u.id_pessoa,'nomerazaosocial':u.nomerazaosocial,'foto':u.foto,'telefone':u.telefone,'id_usuario':u.id_usuario,'tipopessoa':u.tipopessoa,'cpfcnpj':u.cpfcnpj}
+    return {'sucesso':True,'mensagem':'pessoa atualizada com sucesso.','id_pessoa':u.id_pessoa,'nomerazaosocial':u.nomerazaosocial,'foto':u.foto,'telefone':u.telefone,'id_usuario':u.id_usuario,'tipopessoa':u.tipopessoa,'cpfcnpj':u.cpfcnpj,'dinheiro':u.dinheiro}
 
 @app.route("/pessoas/<id_pessoa>",methods=['GET','DELETE'])
 @app.route("/pessoas/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
@@ -128,7 +128,7 @@ def pessoa_update(id_pessoa,nomerazaosocial,foto,telefone,id_usuario,tipopessoa,
 def pessoa(id_pessoa):
     if (request.method == 'POST'):
         some_json = request.get_json()
-        result = pessoa_add(some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj'])
+        result = pessoa_add(some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj'],some_json['dinheiro'])
         if result['sucesso']:
             return jsonify(result), 201
         return jsonify(result), 400
@@ -148,7 +148,7 @@ def pessoa(id_pessoa):
     
     elif (request.method == 'PUT'):
         some_json = request.get_json()
-        result = pessoa_update(some_json['id_pessoa'],some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj'])
+        result = pessoa_update(some_json['id_pessoa'],some_json['nomerazaosocial'],some_json['foto'],some_json['telefone'],some_json['id_usuario'],some_json['tipopessoa'],some_json['cpfcnpj'],some_json['dinheiro'])
         if result['sucesso']:
             return jsonify(result), 200
         return jsonify(result), 400
@@ -232,7 +232,7 @@ def cliente_add(email,senha,nomerazaosocial,foto,telefone,tipopessoa,cpfcnpj,log
     
     i = Pessoa.query.filter(Pessoa.id_usuario == h.id_usuario).first()
     if i == None:
-        i = Pessoa(nomerazaosocial,foto,telefone,h.id_usuario,tipopessoa,cpfcnpj)
+        i = Pessoa(nomerazaosocial,foto,telefone,h.id_usuario,tipopessoa,cpfcnpj,1000)
         db.session.add(i)
         #db.session.commit()
 
@@ -451,7 +451,7 @@ def motorista_add(email,senha,nomerazaosocial,foto,telefone,tipopessoa,cpfcnpj,l
     
     i = Pessoa.query.filter(Pessoa.id_usuario == h.id_usuario).first()
     if i == None:
-        i = Pessoa(nomerazaosocial,foto,telefone,h.id_usuario,tipopessoa,cpfcnpj)
+        i = Pessoa(nomerazaosocial,foto,telefone,h.id_usuario,tipopessoa,cpfcnpj,0)
         db.session.add(i)
 
     j = Endereco.query.filter(Endereco.id_pessoa == i.id_pessoa).first()
