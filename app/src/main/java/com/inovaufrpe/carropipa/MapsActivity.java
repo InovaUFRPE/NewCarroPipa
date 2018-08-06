@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
+import android.util.Log;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -27,17 +28,19 @@ public class MapsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        checkPermission();
-        //getCurrentLocation();
-        MapView mMap = (MapView) findViewById(R.id.mapaId);
 
-        getCurrentLocation();
+        //getCurrentLocation();
+        mMap = (MapView) findViewById(R.id.mapaId);
+
+
+
         mMap.setTileSource(TileSourceFactory.MAPNIK);
         mMap.getController().setCenter(new GeoPoint(-7.082433, -41.468516));
         mMap.getController().setZoom(15);
         Marker marcador = new Marker(mMap);
         marcador.setPosition(new GeoPoint(-7.082433, -41.468516));
         mMap.getOverlays().add(marcador);
+        getCurrentLocation();
     }
 
     public void getCurrentLocation(){
@@ -50,49 +53,13 @@ public class MapsActivity extends AppCompatActivity {
             MyLocationNewOverlay myLocation = new MyLocationNewOverlay(mMap);
             myLocation.enableFollowLocation();
             myLocation.enableMyLocation();
+
             mMap.getOverlays().add(myLocation);
+            mMap.getController().setZoom(20);
         }
     }
 
-    public void checkPermission(){
-        boolean fineLocation = ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED;
-        boolean coarseLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED;
-        boolean internet = ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
-                != PackageManager.PERMISSION_GRANTED;
-        boolean exStorage = ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
-            if (fineLocation || coarseLocation || internet || exStorage){
-                requestPermissions(permissoes,1);
-            }
-        }
-        /*
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                requestPermissions(permissoes, 1);
-            }
-        }*/
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1: {
-                // Se a solicitação de permissão foi cancelada o array vem vazio.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    this.recreate();
 
-                }
-
-            }
-        }
-    }
 }

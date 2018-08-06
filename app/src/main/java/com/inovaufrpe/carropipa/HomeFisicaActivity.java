@@ -1,12 +1,22 @@
 package com.inovaufrpe.carropipa;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +43,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -61,13 +72,14 @@ public class HomeFisicaActivity extends AppCompatActivity {
 
     ProgressDialog loading;
 
-
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_fisica_home);
+        checkPermission();
         try {
             recuperaInformacoes();
         } catch (Exception e) {
@@ -96,17 +108,17 @@ public class HomeFisicaActivity extends AppCompatActivity {
         sbLitros.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tvLitros.setText(String.valueOf(seekBar.getProgress()*1000)+" Litros");
+                tvLitros.setText(String.valueOf(seekBar.getProgress() * 1000) + " Litros");
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                tvLitros.setText(String.valueOf(seekBar.getProgress()*1000)+ " Litros");
+                tvLitros.setText(String.valueOf(seekBar.getProgress() * 1000) + " Litros");
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                tvLitros.setText(String.valueOf(seekBar.getProgress()*1000) + " Litros");
+                tvLitros.setText(String.valueOf(seekBar.getProgress() * 1000) + " Litros");
             }
         });
 
@@ -133,12 +145,55 @@ public class HomeFisicaActivity extends AppCompatActivity {
         lyPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it = new Intent(HomeFisicaActivity.this,MapsActivity.class);
+                Intent it = new Intent(HomeFisicaActivity.this, MapsActivity.class);
                 finish();
                 startActivity(it);
             }
         });
 
+
+    }
+
+    public void checkPermission(){
+        boolean fineLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean coarseLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean internet = ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean exStorage = ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+            if (fineLocation || coarseLocation || internet || exStorage){
+                requestPermissions(permissoes,1);
+            }
+        }
+        /*
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                requestPermissions(permissoes, 1);
+            }
+        }*/
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1: {
+                // Se a solicitação de permissão foi cancelada o array vem vazio.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    this.recreate();
+
+                }
+
+            }
+        }
     }
 
     public void recuperaInformacoes() throws Exception{
@@ -164,8 +219,8 @@ public class HomeFisicaActivity extends AppCompatActivity {
         pedido = new JSONObject();
         final Integer qtd = sbLitros.getProgress();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Deseja confirmar o pedido de "  + (qtd*1000) + " litros de água por R$" + qtd*25 + ",00 + taxa de entrega?");
-        CharSequence[] itens = {"Localização atual", "Endereço Cadastrado"};
+        builder.setTitle("Confirmar pedido de "  + (qtd*1000) + " litros por R$" + qtd*25 + ",00 + taxa de entrega?");
+        CharSequence[] itens = {"Localização atual"};
         builder.setSingleChoiceItems( itens, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -174,19 +229,31 @@ public class HomeFisicaActivity extends AppCompatActivity {
         builder.setPositiveButton("confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                checkPermission();
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                String bestProvider = locationManager.getBestProvider(new Criteria(),true);
+                Location location = locationManager.getLastKnownLocation(bestProvider);
+                String latlong;
+                if (location != null){
+                    latlong = "lat="+String.valueOf(location.getLatitude())+"&lon="+String.valueOf(location.getLongitude());
+                } else {
+                    latlong = "null";
+                }
                 try {
-                    pedido.put("checkin",String.valueOf(which));
+                    pedido.put("checkIn",latlong);
                     pedido.put("id_pessoa_cli",Integer.parseInt(cliente.getString("id_pessoa")));
                     pedido.put("id_pessoa_mot",0);
                     pedido.put("valor",qtd *25);
-                    pedido.put("datahora","null");
-                    pedido.put("imediatoprogramado","null");
-                    pedido.put("confirmaprogramado","null");
+                    pedido.put("dataHora",new Timestamp(System.currentTimeMillis()).getTime());
+                    pedido.put("imediatoProgramado",true);
+                    pedido.put("confirmadoProgramado",false);
+                    pedido.put("valorFrete",0);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 new HomeFisicaActivity.RequestPedido().execute();
                 loading.show();
+
 
             }
         });
@@ -201,7 +268,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
     }
 
 
-
+    //https://nominatim.openstreetmap.org/reverse?format=json&lat=-8.01765&lon=-34.9444&zoom=18&addressdetails=1
 
 
     private class RequestRecupera extends AsyncTask<Void, Void, String> {
@@ -230,20 +297,68 @@ public class HomeFisicaActivity extends AppCompatActivity {
         }
     }
 
+    public class ThreadVerificaPedido extends Thread {
+        public ThreadVerificaPedido() {}
+        @Override
+        public void run() {
+            while(true){
+                new HomeFisicaActivity.RequestVerificaPedido().execute();
+                SystemClock.sleep(5000);
+            }
+        }
+    }
+
+    private class RequestVerificaPedido extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            //botar a url de verificar os pedidos
+            String url = null;
+            url = "http://api-carro-pipa.herokuapp.com/pedidos/"+"4";
+            return Conexao.recuperainfo(url);
+        }
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Log.i("Erro: ","erro");
+            }
+            else{
+                //AQUI ELE PEGA O RETORNO DA REQUEST DOS PEDIDOS, MANDAR PRA LISTVIEW
+                try {
+                    JSONObject pedido = new JSONObject(result);
+                    if (pedido.getInt("id_pessoa_mot") == 0){
+                        Log.i("PEDIDO",pedido.toString());
+                    } else {
+                        Log.i("PEDIDO ACEITO","!!!!!!");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     //essa request faz o registro do pedido
     private class RequestPedido extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
-            Log.i("body: ",pedido.toString());
+            //Log.i("body: ",pedido.toString());
             String url = "http://api-carro-pipa.herokuapp.com/pedidos";
             return Conexao.pedido(url,pedido);
         }
         protected void onPostExecute(String result){
             if (result.equals("NOT FOUND")){
-                Log.i("Erro: ", "erro");
+                //Log.i("Erro: ", "erro");
             }else {
-                Log.i("Sucesso: ", result);
+                try {
+                    JSONObject json = new JSONObject(result);
+                    //Log.i("Sucesso: ", json.getString("id_pedido"));
+                    pedido.put("id",json.getString("id_pedido"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 mostraPedido();
+                Thread t = new HomeFisicaActivity.ThreadVerificaPedido();
+                t.start();
             }
 
         }

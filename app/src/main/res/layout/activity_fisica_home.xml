@@ -271,11 +271,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity=""
                 android:layout_marginBottom="16dp"
-                android:text="Você pediu 75000 litros de água num período de 15 dias"
+                android:text="Você pediu x litros de água em x viagens"
                 android:textAlignment="center"
                 android:textSize="18sp" />
 
-            <LinearLayout
+           <!-- <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -309,7 +309,7 @@
                     android:text="Sempre"
                     android:textAllCaps="false" />
 
-            </LinearLayout>
+            </LinearLayout>-->
         </LinearLayout>
     </LinearLayout>
 
