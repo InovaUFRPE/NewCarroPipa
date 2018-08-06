@@ -111,6 +111,7 @@
                     android:layout_gravity="left"
                     android:text="0 Litros"
                     android:textSize="18sp" />
+
                 <TextView
                     android:id="@+id/tvPreço"
                     android:layout_width="wrap_content"
@@ -137,6 +138,19 @@
                     android:paddingHorizontal="25dp"
                     android:paddingVertical="4dp"
                     android:text="Cancelar solicitação"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:id="@+id/btnVerMapa"
+                    style="@style/ButtonPrimary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:paddingHorizontal="25dp"
+                    android:paddingVertical="4dp"
+                    android:visibility="gone"
+                    android:text="Ver Mapa"
                     android:textAllCaps="false" />
 
             </LinearLayout>

@@ -59,6 +59,11 @@ public class MapsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
 
 
 

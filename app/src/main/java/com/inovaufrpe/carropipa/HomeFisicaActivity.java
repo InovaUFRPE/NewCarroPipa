@@ -63,6 +63,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
     private TextView tvQtd;
     private TextView tvStatus;
     private Button btnCancelar;
+    private Button btnVerMapa;
 
     private TextView olaUsuario;
 
@@ -103,6 +104,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
         btnShowSeekBar = findViewById(R.id.btnShowSeekBar);
         btnCancelarPedido = findViewById(R.id.btnCancelarPedido);
         btnFazerPedido = findViewById(R.id.btnPedirAgua);
+        btnVerMapa = findViewById(R.id.btnVerMapa);
 
         tvLitros = findViewById(R.id.textViewlitros);
         sbLitros.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -142,7 +144,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
                 cancelarSolicitacao();
             }
         });
-        lyPedido.setOnClickListener(new View.OnClickListener() {
+        btnVerMapa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent it = new Intent(HomeFisicaActivity.this, MapsActivity.class);
@@ -203,6 +205,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
         usuario = new JSONObject(info);
         new HomeFisicaActivity.RequestRecupera().execute();
 
+
     }
 
     public void alternaLayoutPedirEscolher(View v){
@@ -252,6 +255,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 new HomeFisicaActivity.RequestPedido().execute();
+                btnCancelarPedido.setVisibility(View.VISIBLE);
                 loading.show();
 
 
@@ -313,7 +317,11 @@ public class HomeFisicaActivity extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
             //botar a url de verificar os pedidos
             String url = null;
-            url = "http://api-carro-pipa.herokuapp.com/pedidos/"+"4";
+            try {
+                url = "http://api-carro-pipa.herokuapp.com/pedidos/"+ pedido.getInt("id_pedido");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return Conexao.recuperainfo(url);
         }
         protected void onPostExecute(String result){
@@ -327,13 +335,19 @@ public class HomeFisicaActivity extends AppCompatActivity {
                     if (pedido.getInt("id_pessoa_mot") == 0){
                         Log.i("PEDIDO",pedido.toString());
                     } else {
-                        Log.i("PEDIDO ACEITO","!!!!!!");
+                        aceitouPedido();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    public void aceitouPedido(){
+        btnVerMapa.setVisibility(View.VISIBLE);
+        btnCancelar.setVisibility(View.GONE);
+        tvStatus.setText("Status: A caminho");
     }
 
     //essa request faz o registro do pedido
@@ -350,8 +364,8 @@ public class HomeFisicaActivity extends AppCompatActivity {
             }else {
                 try {
                     JSONObject json = new JSONObject(result);
-                    //Log.i("Sucesso: ", json.getString("id_pedido"));
-                    pedido.put("id",json.getString("id_pedido"));
+                    Log.i("Sucesso: ", json.getString("id_pedido"));
+                    pedido.put("id_pedido",json.getString("id_pedido"));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
