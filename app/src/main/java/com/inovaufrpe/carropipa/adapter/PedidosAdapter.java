@@ -14,6 +14,7 @@ public class PedidosAdapter extends RecyclerView.Adapter<PedidosListHolder> {
     private final List<Pedido> pedidos;
     public PedidosAdapter(ArrayList p) {
         pedidos = p;
+
     }
 
 

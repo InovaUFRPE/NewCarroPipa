@@ -57,13 +57,6 @@ public class LoginActivity extends AppCompatActivity {
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (swtTipo.isChecked()) {
-                    edtLogin.setText("motorista@gmail.com");
-                    edtSenha.setText("123456");
-                } else {
-                    edtLogin.setText("cliente@gmail.com");
-                    edtSenha.setText("123456");
-                }
                 validar();
                 /*Intent it = new Intent(LoginActivity.this,MapsActivity.class);
                 finish();

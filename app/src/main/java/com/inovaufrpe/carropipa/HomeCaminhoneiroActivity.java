@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class HomeCaminhoneiroActivity extends AppCompatActivity {
 
@@ -201,12 +202,8 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         for(int i = 0; i<jsonArray.length(); i++){
             try {
                 JSONObject pedido = jsonArray.getJSONObject(i);
-                String checkin = pedido.getString("checkIn");
-
 
                 //-26.196223,-52.689523
-                Log.i("endereco",checkin);
-                new HomeCaminhoneiroActivity.RequestEndereco(checkin).execute();
                 list.add(new Pedido(
                         pedido.getInt("id_pedido"),
                         pedido.getInt("id_pessoa_cli"),
@@ -236,14 +233,24 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... voids) {
             String url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+param;
-            return Conexao.recuperaEnd(url);
+            String result = Conexao.recuperaEnd(url);
+            return result;
         }
+
         protected void onPostExecute(String result){
             if (result.equals("NOT FOUND")){
                 Log.i("Erro: ","erro");
             }
             else{
-                Log.i("sucesso", result);
+                try {
+                    JSONObject json = new JSONObject(result);
+                    String lista = json.getString("results");
+                    JSONObject objeto = new JSONArray(lista).getJSONObject(0);
+                    String endereco = objeto.getString("formatted_address");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

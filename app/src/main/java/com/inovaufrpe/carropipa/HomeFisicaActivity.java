@@ -37,6 +37,7 @@ import com.inovaufrpe.carropipa.utils.Sessao;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -179,14 +180,6 @@ public class HomeFisicaActivity extends AppCompatActivity {
                 requestPermissions(permissoes,1);
             }
         }
-        /*
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                requestPermissions(permissoes, 1);
-            }
-        }*/
     }
 
     @Override
@@ -238,6 +231,9 @@ public class HomeFisicaActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 checkPermission();
                 locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
+
                 String bestProvider = locationManager.getBestProvider(new Criteria(),true);
                 Location location = locationManager.getLastKnownLocation(bestProvider);
                 String latlong;
@@ -247,6 +243,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
                 } else {
                     latlong = "null";
                 }
+                Log.i("latlong",latlong);
                 try {
                     pedido.put("checkIn",latlong);
                     pedido.put("id_pessoa_cli",Integer.parseInt(cliente.getString("id_pessoa")));

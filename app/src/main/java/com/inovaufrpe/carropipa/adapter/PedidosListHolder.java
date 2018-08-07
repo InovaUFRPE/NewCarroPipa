@@ -39,8 +39,9 @@ public class PedidosListHolder extends RecyclerView.ViewHolder implements Adapte
 
             @Override
             public void onClick(View v) {
-                
-
+                vw = v;
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                builder.setTitle("Deseja realizar essa entrega?");
                 builder.setPositiveButton("Aceitar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
