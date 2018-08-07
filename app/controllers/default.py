@@ -1,6 +1,6 @@
 import datetime as dt
-import requests
-import ast
+#import requests
+#import ast
 
 from flask import render_template, jsonify, request
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
