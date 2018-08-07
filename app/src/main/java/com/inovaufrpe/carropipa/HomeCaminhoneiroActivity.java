@@ -43,6 +43,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
     private PedidosAdapter adapter;
     private TextView olaUsuario;
     private TextView strSemServico;
+    private TextView tvDinheiro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycle);
         olaUsuario = (TextView) findViewById(R.id.txtViewOla);
         strSemServico = findViewById(R.id.tvNenhumPedido);
+        tvDinheiro = findViewById(R.id.txtViewDinheiro);
+
 
         try {
             recuperaInformacoes();
@@ -96,6 +99,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
                     cliente = new JSONObject(result);
                     Log.i("id",cliente.toString());
                     olaUsuario.setText("Olá, " + cliente.getString("nomerazaosocial"));
+                    tvDinheiro.setText("R$ "+ (int) cliente.getDouble("dinheiro") +",00");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

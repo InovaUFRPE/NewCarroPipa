@@ -62,6 +62,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
     private TextView tvPreco;
     private TextView tvQtd;
     private TextView tvStatus;
+    private TextView tvDinheiro;
     private Button btnCancelar;
     private Button btnVerMapa;
 
@@ -97,6 +98,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
         tvQtd = findViewById(R.id.tvQtd);
         tvPreco = findViewById(R.id.tvPreço);
         tvStatus = findViewById(R.id.tvStatus);
+        tvDinheiro = findViewById(R.id.txtViewDinheiro);
         btnCancelar = findViewById(R.id.btnCancelarPedido2);
 
 
@@ -298,6 +300,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
                 try {
                     cliente = new JSONObject(result);
                     olaUsuario.setText("Olá, " + cliente.getString("nomerazaosocial"));
+                    tvDinheiro.setText("R$ "+ (int) cliente.getDouble("dinheiro") +",00");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
