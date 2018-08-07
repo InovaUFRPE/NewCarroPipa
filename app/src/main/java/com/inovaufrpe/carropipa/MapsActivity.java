@@ -35,11 +35,11 @@ public class MapsActivity extends AppCompatActivity {
 
 
         mMap.setTileSource(TileSourceFactory.MAPNIK);
-        mMap.getController().setCenter(new GeoPoint(-7.082433, -41.468516));
+        /*mMap.getController().setCenter(new GeoPoint(-7.082433, -41.468516));
         mMap.getController().setZoom(15);
         Marker marcador = new Marker(mMap);
         marcador.setPosition(new GeoPoint(-7.082433, -41.468516));
-        mMap.getOverlays().add(marcador);
+        mMap.getOverlays().add(marcador);*/
         getCurrentLocation();
     }
 

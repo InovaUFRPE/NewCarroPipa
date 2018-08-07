@@ -32,6 +32,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.inovaufrpe.carropipa.utils.Conexao;
+import com.inovaufrpe.carropipa.utils.Sessao;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +72,8 @@ public class HomeFisicaActivity extends AppCompatActivity {
     private JSONObject usuario;
     private JSONObject cliente;
     private JSONObject pedido;
+
+    Thread threadPedido;
 
     ProgressDialog loading;
 
@@ -206,8 +209,6 @@ public class HomeFisicaActivity extends AppCompatActivity {
         String info = dados.getString("dados login");
         usuario = new JSONObject(info);
         new HomeFisicaActivity.RequestRecupera().execute();
-
-
     }
 
     public void alternaLayoutPedirEscolher(View v){
@@ -343,6 +344,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
                         Log.i("PEDIDO",pedido.toString());
                     } else {
                         aceitouPedido();
+                        threadPedido.interrupt();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -373,13 +375,13 @@ public class HomeFisicaActivity extends AppCompatActivity {
                     JSONObject json = new JSONObject(result);
                     Log.i("Sucesso: ", json.getString("id_pedido"));
                     pedido.put("id_pedido",json.getString("id_pedido"));
-
+                    Sessao.pedido = pedido;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 mostraPedido();
-                Thread t = new HomeFisicaActivity.ThreadVerificaPedido();
-                t.start();
+                threadPedido = new HomeFisicaActivity.ThreadVerificaPedido();
+                threadPedido.start();
             }
 
         }

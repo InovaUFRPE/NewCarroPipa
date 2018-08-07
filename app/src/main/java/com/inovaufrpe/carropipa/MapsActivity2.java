@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.inovaufrpe.carropipa.utils.Conexao;
+import com.inovaufrpe.carropipa.utils.Sessao;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +33,6 @@ import java.util.Map;
 public class MapsActivity2 extends AppCompatActivity {
 
     MapView mMap;
-    String idmot;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,24 +44,20 @@ public class MapsActivity2 extends AppCompatActivity {
 
 
 
-        mMap.setTileSource(TileSourceFactory.MAPNIK);
+        /*mMap.setTileSource(TileSourceFactory.MAPNIK);
         mMap.getController().setCenter(new GeoPoint(-7.082433, -41.468516));
         mMap.getController().setZoom(15);
         Marker marcador = new Marker(mMap);
         marcador.setPosition(new GeoPoint(-7.082433, -41.468516));
-        mMap.getOverlays().add(marcador);
+        mMap.getOverlays().add(marcador);*/
         getCurrentLocation();
 
         recuperainfo();
     }
 
     public void recuperainfo(){
-        Intent intent = getIntent();
-        Bundle dados = intent.getExtras();
-        String id = dados.getString("idpedido");
-        idmot = dados.getString("idmot");
-        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
-        new MapsActivity2.RequestRecupera(id).execute();
+        int id = Sessao.idPedido;
+        new MapsActivity2.RequestRecupera(String.valueOf(id)).execute();
     }
 
     public void getCurrentLocation(){
@@ -100,10 +96,12 @@ public class MapsActivity2 extends AppCompatActivity {
                 Log.i("Erro: ","erro");
             }
             else{
+
                 try {
                     JSONObject json = new JSONObject(result);
-
-                    json.put("id_pessoa_mot", Integer.parseInt(idmot));
+                    json.put("id_pessoa_mot", Sessao.usuario.getInt("id_pessoa"));
+                    json.put("id_pedido",Sessao.idPedido);
+                    Log.i("editado",json.toString());
                     new MapsActivity2.EditaInfo(json).execute();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -120,15 +118,15 @@ public class MapsActivity2 extends AppCompatActivity {
         }
         @Override
         protected String doInBackground(Void... voids) {
-            return Conexao.aceitaPedido("http://api-carro-pipa.herokuapp.com/pedidos/",json);
+            return Conexao.aceitaPedido("http://api-carro-pipa.herokuapp.com/pedidos",json);
         }
 
         protected void onPostExecute(String result){
             if (result.equals("NOT FOUND")){
-                Log.i("erro","not found");
+                Log.i("erro editado","not found");
             }
             else{
-                Log.i("resultado",result);
+                Log.i("editado",result);
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.inovaufrpe.carropipa;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.Activity;
@@ -28,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.inovaufrpe.carropipa.adapter.PedidosAdapter;
 import com.inovaufrpe.carropipa.model.Pedido;
 import com.inovaufrpe.carropipa.utils.Conexao;
+import com.inovaufrpe.carropipa.utils.Sessao;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +52,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_caminhoneiro_home);
+        checkPermission();
 
         recyclerView = findViewById(R.id.recycle);
         olaUsuario = (TextView) findViewById(R.id.txtViewOla);
@@ -74,9 +78,52 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         Bundle dados = intent.getExtras();
         String info = dados.getString("dados login");
         usuario = new JSONObject(info);
+        Sessao.usuario = usuario;
         Log.i("id",usuario.toString());
         new HomeCaminhoneiroActivity.RequestRecupera().execute();
 
+    }
+
+    public void checkPermission(){
+        boolean fineLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean coarseLocation = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean internet = ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED;
+        boolean exStorage = ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+            if (fineLocation || coarseLocation || internet || exStorage){
+                requestPermissions(permissoes,1);
+            }
+        }
+        /*
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                requestPermissions(permissoes, 1);
+            }
+        }*/
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1: {
+                // Se a solicitação de permissão foi cancelada o array vem vazio.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    this.recreate();
+
+                }
+
+            }
+        }
     }
 
     private class RequestRecupera extends AsyncTask<Void, Void, String> {
@@ -97,6 +144,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
             else{
                 try {
                     cliente = new JSONObject(result);
+                    Sessao.cliente = cliente;
                     Log.i("id",cliente.toString());
                     olaUsuario.setText("Olá, " + cliente.getString("nomerazaosocial"));
                     tvDinheiro.setText("R$ "+ (int) cliente.getDouble("dinheiro") +",00");
@@ -152,10 +200,11 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         for(int i = 0; i<jsonArray.length(); i++){
             try {
                 JSONObject pedido = jsonArray.getJSONObject(i);
-                // pegar endereco com base no pedido.getString("checkIn")
                 String checkin = pedido.getString("checkIn");
 
-                new HomeCaminhoneiroActivity.RequestEndereco(checkin).execute();
+
+                String endereco = String.valueOf(new RequestEndereco(checkin).execute());
+                //Log.i("endereco",endereco);
                 list.add(new Pedido(
                         pedido.getInt("id_pedido"),
                         pedido.getInt("id_pessoa_cli"),
@@ -184,9 +233,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         }
         @Override
         protected String doInBackground(Void... voids) {
-            //botar a url de verificar os pedidos
             String url = "https://nominatim.openstreetmap.org/reverse?format=json&"+ param +"&zoom=18&addressdetails=1";
-            Log.i("url",url);
             return Conexao.recuperaEnd(url);
         }
         protected void onPostExecute(String result){
@@ -210,7 +257,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        adapter = new PedidosAdapter(pedidos, Integer.parseInt(id));
+        adapter = new PedidosAdapter(pedidos);
         recyclerView.setAdapter(adapter);
         if (adapter.getItemCount() > 0) {
             strSemServico.setVisibility(View.GONE);

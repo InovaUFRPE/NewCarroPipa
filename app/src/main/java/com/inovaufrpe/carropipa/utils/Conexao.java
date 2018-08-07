@@ -168,12 +168,14 @@ public class Conexao {
                     stringBuilder.append(response+"\n");
                 }
                 bufferedReader.close();
+                Log.i("entrou","1");
                 return stringBuilder.toString();
             } else {
+                Log.i("entrou",urlConnection.getResponseMessage()+ "----" + stringBuilder.toString());
                 return stringBuilder.toString();
             }
         } catch (Exception e) {
-            Log.i("teste2",e.toString());
+            Log.i("erro",e.toString());
             return null;
         }
     }

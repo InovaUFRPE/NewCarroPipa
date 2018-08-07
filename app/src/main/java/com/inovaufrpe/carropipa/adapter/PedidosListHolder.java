@@ -14,13 +14,13 @@ import com.inovaufrpe.carropipa.MapsActivity;
 import com.inovaufrpe.carropipa.MapsActivity2;
 import com.inovaufrpe.carropipa.R;
 import com.inovaufrpe.carropipa.model.Pedido;
+import com.inovaufrpe.carropipa.utils.Sessao;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PedidosListHolder extends RecyclerView.ViewHolder implements AdapterView.OnItemClickListener {
-    public int id;
-    public int idmot;
+
     public TextView pedido;
     public TextView endereco;
     public TextView idPedido;
@@ -30,18 +30,14 @@ public class PedidosListHolder extends RecyclerView.ViewHolder implements Adapte
         pedido = itemView.findViewById(R.id.tvPreco);
         endereco = itemView.findViewById(R.id.tvEndereco);
         idPedido = itemView.findViewById(R.id.tvIDPedido);
-        idmot = id;
+
 
         itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("idpedido", idPedido.getText().toString());
-                bundle.putString("idmot", String.valueOf(idmot));
-                Toast.makeText(v.getContext(), idPedido.getText(), Toast.LENGTH_SHORT).show();
+                Sessao.idPedido = Integer.parseInt(idPedido.getText().toString());
                 Intent it = new Intent(itemView.getContext(), MapsActivity2.class);
-                it.putExtras(bundle);
                 v.getContext().startActivity(it);
 
             }
