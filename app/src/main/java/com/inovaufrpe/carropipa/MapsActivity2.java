@@ -3,6 +3,7 @@ package com.inovaufrpe.carropipa;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -14,6 +15,10 @@ import android.Manifest;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.inovaufrpe.carropipa.utils.Conexao;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -22,9 +27,12 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.Map;
+
 public class MapsActivity2 extends AppCompatActivity {
 
     MapView mMap;
+    String idmot;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +59,9 @@ public class MapsActivity2 extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle dados = intent.getExtras();
         String id = dados.getString("idpedido");
+        idmot = dados.getString("idmot");
         Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
+        new MapsActivity2.RequestRecupera(id).execute();
     }
 
     public void getCurrentLocation(){
@@ -73,6 +83,54 @@ public class MapsActivity2 extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    private class RequestRecupera extends AsyncTask<Void, Void, String> {
+        String idpedido;
+        public RequestRecupera(String id){
+            this.idpedido = id;
+        }
+        @Override
+        protected String doInBackground(Void... voids) {
+            String url = "http://api-carro-pipa.herokuapp.com/pedidos/"+this.idpedido;
+            return Conexao.recuperaEnd(url);
+        }
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Log.i("Erro: ","erro");
+            }
+            else{
+                try {
+                    JSONObject json = new JSONObject(result);
+
+                    json.put("id_pessoa_mot", Integer.parseInt(idmot));
+                    new MapsActivity2.EditaInfo(json).execute();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private class EditaInfo extends AsyncTask<Void, Void, String> {
+        JSONObject json;
+
+        public EditaInfo(JSONObject json){
+            this.json = json;
+        }
+        @Override
+        protected String doInBackground(Void... voids) {
+            return Conexao.aceitaPedido("http://api-carro-pipa.herokuapp.com/pedidos/",json);
+        }
+
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Log.i("erro","not found");
+            }
+            else{
+                Log.i("resultado",result);
+            }
+        }
     }
 
 

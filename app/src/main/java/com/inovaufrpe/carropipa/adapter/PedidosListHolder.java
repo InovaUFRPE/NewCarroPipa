@@ -20,6 +20,7 @@ import java.util.List;
 
 public class PedidosListHolder extends RecyclerView.ViewHolder implements AdapterView.OnItemClickListener {
     public int id;
+    public int idmot;
     public TextView pedido;
     public TextView endereco;
     public TextView idPedido;
@@ -29,6 +30,7 @@ public class PedidosListHolder extends RecyclerView.ViewHolder implements Adapte
         pedido = itemView.findViewById(R.id.tvPreco);
         endereco = itemView.findViewById(R.id.tvEndereco);
         idPedido = itemView.findViewById(R.id.tvIDPedido);
+        idmot = id;
 
         itemView.setOnClickListener(new View.OnClickListener() {
 
@@ -36,6 +38,7 @@ public class PedidosListHolder extends RecyclerView.ViewHolder implements Adapte
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("idpedido", idPedido.getText().toString());
+                bundle.putString("idmot", String.valueOf(idmot));
                 Toast.makeText(v.getContext(), idPedido.getText(), Toast.LENGTH_SHORT).show();
                 Intent it = new Intent(itemView.getContext(), MapsActivity2.class);
                 it.putExtras(bundle);

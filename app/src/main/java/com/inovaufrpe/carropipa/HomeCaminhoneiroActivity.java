@@ -71,6 +71,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         Bundle dados = intent.getExtras();
         String info = dados.getString("dados login");
         usuario = new JSONObject(info);
+        Log.i("id",usuario.toString());
         new HomeCaminhoneiroActivity.RequestRecupera().execute();
 
     }
@@ -93,6 +94,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
             else{
                 try {
                     cliente = new JSONObject(result);
+                    Log.i("id",cliente.toString());
                     olaUsuario.setText("Olá, " + cliente.getString("nomerazaosocial"));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -198,8 +200,13 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
     private void initRecycler (ArrayList pedidos) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
-        adapter = new PedidosAdapter(pedidos);
+        String id = null;
+        try {
+            id= usuario.getString("id_pessoa");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        adapter = new PedidosAdapter(pedidos, Integer.parseInt(id));
         recyclerView.setAdapter(adapter);
         if (adapter.getItemCount() > 0) {
             strSemServico.setVisibility(View.GONE);

@@ -139,6 +139,45 @@ public class Conexao {
         }
     }
 
+    public static String aceitaPedido(String urlLogin, JSONObject json){
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+        try{
+            URL url = new URL(urlLogin);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+
+            urlConnection.setAllowUserInteraction(true);
+            urlConnection.setRequestMethod("PUT");
+            urlConnection.setRequestProperty("Content-Type","application/json");
+            urlConnection.setRequestProperty("Accept","application/json");
+            urlConnection.connect();
+
+
+            OutputStreamWriter streamWriter = new OutputStreamWriter(urlConnection.getOutputStream());
+            streamWriter.write(json.toString());
+            streamWriter.flush();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_CREATED){
+                InputStreamReader streamReader = new InputStreamReader(urlConnection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(streamReader);
+                String response = null;
+                while((response = bufferedReader.readLine())!=null){
+                    stringBuilder.append(response+"\n");
+                }
+                bufferedReader.close();
+                return stringBuilder.toString();
+            } else {
+                return stringBuilder.toString();
+            }
+        } catch (Exception e) {
+            Log.i("teste2",e.toString());
+            return null;
+        }
+    }
+
     public static String recuperainfo(String urlLogin){
         HttpURLConnection urlConnection;
         BufferedReader reader;

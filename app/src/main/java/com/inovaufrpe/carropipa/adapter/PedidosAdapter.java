@@ -12,9 +12,11 @@ import java.util.List;
 
 public class PedidosAdapter extends RecyclerView.Adapter<PedidosListHolder> {
     private final List<Pedido> pedidos;
-
-    public PedidosAdapter(ArrayList p) {
+    private int id;
+    public PedidosAdapter(ArrayList p, int id) {
         pedidos = p;
+        this.id = id;
+
     }
 
 
@@ -32,7 +34,7 @@ public class PedidosAdapter extends RecyclerView.Adapter<PedidosListHolder> {
         //alterar para endereco real
         holder.endereco.setText(pedidos.get(position).checkin);
         holder.idPedido.setText(String.valueOf(pedidos.get(position).idPedido));
-
+        holder.idmot = this.id;
 
     }
 
