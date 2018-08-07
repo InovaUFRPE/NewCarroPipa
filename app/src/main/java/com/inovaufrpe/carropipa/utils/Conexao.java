@@ -264,8 +264,8 @@ public class Conexao {
                 bufferedReader.close();
                 return stringBuilder.toString();
             } else {
-                Log.i("sucesso", String.valueOf(urlConnection.getResponseCode()));
-                return urlConnection.getResponseMessage();
+                Log.i("sucesso", stringBuilder.toString());
+                return stringBuilder.toString();
             }
         } catch (Exception e) {
             Log.i("erro",e.toString());

@@ -158,7 +158,14 @@ public class LoginActivity extends AppCompatActivity {
             else{
                 Bundle bundle = new Bundle();
                 bundle.putString("dados login",result);
-                if (swtTipo.isChecked()){
+                try {
+                    JSONObject json = new JSONObject(result);
+                    new LoginActivity.Request2(json.getString("id_pessoa")).execute();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                /*if (swtTipo.isChecked()){
                     Intent it = new Intent(LoginActivity.this,HomeCaminhoneiroActivity.class);
                     it.putExtras(bundle);
                     finish();
@@ -168,7 +175,51 @@ public class LoginActivity extends AppCompatActivity {
                     it.putExtras(bundle);
                     finish();
                     startActivity(it);
+                }*/
+            }
+        }
+    }
+
+    private class Request2 extends AsyncTask<Void, Void, String> {
+
+        String params;
+
+        public Request2(String url){
+            this.params = url;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            return Conexao.localizacao("http://api-carro-pipa.herokuapp.com/pessoas/"+this.params);
+        }
+
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Toast.makeText(LoginActivity.this, "Informações incorretas", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Bundle bundle = new Bundle();
+                bundle.putString("dados login",result);
+                try {
+                    JSONObject json = new JSONObject(result);
+                    String tipo = json.getString("tipopessoa");
+                    if (swtTipo.isChecked() && tipo.equals("motorista")){
+                        Intent it = new Intent(LoginActivity.this,HomeCaminhoneiroActivity.class);
+                        it.putExtras(bundle);
+                        finish();
+                        startActivity(it);
+                    } else if (!swtTipo.isChecked() && tipo.equals("cliente")) {
+                        Intent it = new Intent(LoginActivity.this,HomeFisicaActivity.class);
+                        it.putExtras(bundle);
+                        finish();
+                        startActivity(it);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Informações incorretas", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+
             }
         }
     }

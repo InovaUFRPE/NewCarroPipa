@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.Manifest;
 import android.util.Log;
 
+import com.inovaufrpe.carropipa.utils.Sessao;
+
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -23,6 +25,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 public class MapsActivity extends AppCompatActivity {
 
     MapView mMap;
+    Marker marcador;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +37,7 @@ public class MapsActivity extends AppCompatActivity {
 
 
 
-        mMap.setTileSource(TileSourceFactory.MAPNIK);
-        /*mMap.getController().setCenter(new GeoPoint(-7.082433, -41.468516));
-        mMap.getController().setZoom(15);
-        Marker marcador = new Marker(mMap);
-        marcador.setPosition(new GeoPoint(-7.082433, -41.468516));
-        mMap.getOverlays().add(marcador);*/
+        Log.i("pedido", Sessao.pedido.toString());
         getCurrentLocation();
     }
 

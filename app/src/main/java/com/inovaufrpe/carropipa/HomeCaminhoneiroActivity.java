@@ -47,6 +47,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
     private TextView olaUsuario;
     private TextView strSemServico;
     private TextView tvDinheiro;
+    private Thread verificarPedidos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +68,8 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         }
 
         //inicia a Thread que fica verificando os pedidos
-        Thread t = new ThreadVerificarPedidos();
-        t.start();
+        verificarPedidos = new ThreadVerificarPedidos();
+        verificarPedidos.start();
         ArrayList<Pedido> ar = new ArrayList<Pedido>();
         initRecycler(ar);
     }
@@ -203,8 +204,9 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
                 String checkin = pedido.getString("checkIn");
 
 
-                String endereco = String.valueOf(new RequestEndereco(checkin).execute());
-                //Log.i("endereco",endereco);
+                //-26.196223,-52.689523
+                Log.i("endereco",checkin);
+                new HomeCaminhoneiroActivity.RequestEndereco(checkin).execute();
                 list.add(new Pedido(
                         pedido.getInt("id_pedido"),
                         pedido.getInt("id_pessoa_cli"),
@@ -233,7 +235,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         }
         @Override
         protected String doInBackground(Void... voids) {
-            String url = "https://nominatim.openstreetmap.org/reverse?format=json&"+ param +"&zoom=18&addressdetails=1";
+            String url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+param;
             return Conexao.recuperaEnd(url);
         }
         protected void onPostExecute(String result){

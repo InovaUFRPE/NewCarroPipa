@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.inovaufrpe.carropipa.utils.Conexao;
 import com.inovaufrpe.carropipa.utils.Sessao;
 
@@ -241,10 +242,7 @@ public class HomeFisicaActivity extends AppCompatActivity {
                 Location location = locationManager.getLastKnownLocation(bestProvider);
                 String latlong;
                 if (location != null){
-
-                    Log.i("lat", String.valueOf(location.getLatitude()));
-                    Log.i("lon", String.valueOf(location.getLongitude()));
-                    latlong = "lat="+String.valueOf(location.getLatitude())+"&lon="+String.valueOf(location.getLongitude());
+                    latlong = String.valueOf(location.getLatitude())+","+String.valueOf(location.getLongitude());
 
                 } else {
                     latlong = "null";
@@ -333,6 +331,9 @@ public class HomeFisicaActivity extends AppCompatActivity {
             return Conexao.recuperainfo(url);
         }
         protected void onPostExecute(String result){
+            if (result == null){
+                return;
+            }
             if (result.equals("NOT FOUND")){
                 Log.i("Erro: ","erro");
             }

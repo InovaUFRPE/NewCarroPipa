@@ -3,12 +3,17 @@ package com.inovaufrpe.carropipa;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
@@ -26,6 +31,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.Map;
@@ -44,14 +50,15 @@ public class MapsActivity2 extends AppCompatActivity {
 
 
 
-        /*mMap.setTileSource(TileSourceFactory.MAPNIK);
-        mMap.getController().setCenter(new GeoPoint(-7.082433, -41.468516));
+        mMap.setTileSource(TileSourceFactory.MAPNIK);
+        /*mMap.getController().setCenter(new GeoPoint(-7.082433, -41.468516));
         mMap.getController().setZoom(15);
         Marker marcador = new Marker(mMap);
         marcador.setPosition(new GeoPoint(-7.082433, -41.468516));
+
         mMap.getOverlays().add(marcador);*/
         getCurrentLocation();
-
+        Log.i("pedido", String.valueOf(Sessao.idPedido));
         recuperainfo();
     }
 
@@ -67,9 +74,14 @@ public class MapsActivity2 extends AppCompatActivity {
         boolean exStorage = ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 
         if(fineLocation && coarseLocation && internet && exStorage) {
-            MyLocationNewOverlay myLocation = new MyLocationNewOverlay(mMap);
+
+            GpsMyLocationProvider gps = new GpsMyLocationProvider(this);
+            gps.addLocationSource(LocationManager.NETWORK_PROVIDER);
+
+            MyLocationNewOverlay myLocation = new MyLocationNewOverlay(gps,mMap);
             myLocation.enableFollowLocation();
             myLocation.enableMyLocation();
+            ;
 
             mMap.getOverlays().add(myLocation);
             mMap.getController().setZoom(20);
