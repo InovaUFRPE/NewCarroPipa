@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.inovaufrpe.carropipa.utils.Sessao;
 
@@ -30,6 +31,7 @@ public class MapsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        setTitle("Pedido");
 
 
         //getCurrentLocation();
@@ -59,7 +61,8 @@ public class MapsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        Toast.makeText(this, "Você não pode retornar até que o pedido seja concluido", Toast.LENGTH_LONG).show();
+//        super.onBackPressed();
     }
 
 
