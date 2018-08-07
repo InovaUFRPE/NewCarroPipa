@@ -1,3 +1,7 @@
+import datetime as dt
+import requests
+import ast
+
 from flask import render_template, jsonify, request
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from app import app, db
@@ -521,7 +525,6 @@ def motorista(id_pessoa):
 
 
 '''----------------------------Pedido--------------------------------'''
-import datetime as dt
 def pedido_add(id_pessoa_cli,id_pessoa_mot,valor,dataHora,checkIn,imediatoProgramado,confirmadoProgramado,valorFrete):
     #if ultimoPedidoSemPagto(id_pessoa_cli):
     #    return "Não pode abrir um novo pedido com um em andamento"        
@@ -592,7 +595,12 @@ def pedidonaoaceito_get():
     peds = Pedido.query.filter(Pedido.id_pessoa_mot == 0).all()
     listaPedsNaoAceitos = []
     for g in peds:
-        listaPedsNaoAceitos.append({"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete})
+        content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + g.checkIn).content
+        my_json = content.decode('utf8')#.replace("'", '"')
+        s = ast.literal_eval(my_json)
+        endereco = s['name'] + ' - ' + s['address']['suburb'] + ' - ' + s['address']['city'] + ' - ' + s['address']['state']
+
+        listaPedsNaoAceitos.append({"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete,"endereco": endereco})
     return listaPedsNaoAceitos
 
 
