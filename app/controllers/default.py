@@ -1,6 +1,6 @@
 import datetime as dt
 import requests
-import ast
+import json
 
 from flask import render_template, jsonify, request
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
@@ -595,11 +595,13 @@ def pedidonaoaceito_get():
     peds = Pedido.query.filter(Pedido.id_pessoa_mot == 0).all()
     listaPedsNaoAceitos = []
     for g in peds:
-        content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + g.checkIn).content
-        my_json = content.decode('utf8')#.replace("'", '"')
-        s = ast.literal_eval(my_json)
-        endereco = s['name'] + ' - ' + s['address']['suburb'] + ' - ' + s['address']['city'] + ' - ' + s['address']['state']
-
+        # content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + g.checkIn).content
+        # my_json = content.decode('utf8')#.replace("'", '"')
+        # s = json.loads(my_json)
+        # print(s)
+        # print(s[0])
+        endereco = ''
+        # endereco = s['name'] + ' - ' + s['address']['suburb'] + ' - ' + s['address']['city'] + ' - ' + s['address']['state']
         listaPedsNaoAceitos.append({"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete,"endereco": endereco})
     return listaPedsNaoAceitos
 
