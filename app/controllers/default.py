@@ -597,9 +597,9 @@ def pedidonaoaceito_get():
     for g in peds:
         
 
-        content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + g.checkIn).content
-        my_json = content.decode('utf8')#.replace("'", '"')
-        s = json.loads(my_json)
+        # content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + g.checkIn).content
+        # my_json = content.decode('utf8')#.replace("'", '"')
+        # s = json.loads(my_json)
 
         # rua = (s['address']['road'] + ' - ') if s['name'] != None else ''
         # bairro = (s['address']['suburb'] + ' - ') if s['name'] != None else ''
