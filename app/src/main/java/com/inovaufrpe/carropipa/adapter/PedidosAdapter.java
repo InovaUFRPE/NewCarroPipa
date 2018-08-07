@@ -12,9 +12,10 @@ import java.util.List;
 
 public class PedidosAdapter extends RecyclerView.Adapter<PedidosListHolder> {
     private final List<Pedido> pedidos;
-    public PedidosAdapter(ArrayList p) {
+    private final List<String> enderecos;
+    public PedidosAdapter(ArrayList p, ArrayList e) {
         pedidos = p;
-
+        enderecos = e;
     }
 
 
@@ -28,8 +29,7 @@ public class PedidosAdapter extends RecyclerView.Adapter<PedidosListHolder> {
     public void onBindViewHolder(PedidosListHolder holder, int position) {
         holder.pedido.setText(String.valueOf((int)pedidos.get(position).valorAgua*1000/25) + " litros");
 
-        //alterar para endereco real
-        holder.endereco.setText(pedidos.get(position).checkin);
+        holder.endereco.setText(enderecos.get(position));
         holder.idPedido.setText(String.valueOf(pedidos.get(position).idPedido));
 
     }

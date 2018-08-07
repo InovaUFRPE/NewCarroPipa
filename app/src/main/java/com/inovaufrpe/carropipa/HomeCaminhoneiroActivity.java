@@ -72,7 +72,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         verificarPedidos = new ThreadVerificarPedidos();
         verificarPedidos.start();
         ArrayList<Pedido> ar = new ArrayList<Pedido>();
-        initRecycler(ar);
+        initRecycler(ar, ar);
     }
 
     public void recuperaInformacoes() throws Exception{
@@ -188,7 +188,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
 
                 try {
                     JSONArray jsonArray = new JSONArray(result);
-                    initRecycler(criaLista(jsonArray));
+                    criaLista(jsonArray);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -197,13 +197,13 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<Pedido> criaLista(JSONArray jsonArray){
+    private void criaLista(JSONArray jsonArray){
         ArrayList<Pedido> list = new ArrayList<Pedido>();
+        ArrayList<String> listEnd = new ArrayList<>();
         for(int i = 0; i<jsonArray.length(); i++){
             try {
                 JSONObject pedido = jsonArray.getJSONObject(i);
 
-                //-26.196223,-52.689523
                 list.add(new Pedido(
                         pedido.getInt("id_pedido"),
                         pedido.getInt("id_pessoa_cli"),
@@ -216,13 +216,14 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
                         pedido.getBoolean("confirmadoProgramado")
                         )
                 );
+                listEnd.add(pedido.getString("endereco"));
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
-        return list;
+        initRecycler(list, listEnd);
     }
 
     private class RequestEndereco extends AsyncTask<Void, Void, String> {
@@ -257,7 +258,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
 
 
 
-    private void initRecycler (ArrayList pedidos) {
+    private void initRecycler (ArrayList pedidos, ArrayList enderecos) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         String id = null;
@@ -266,7 +267,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        adapter = new PedidosAdapter(pedidos);
+        adapter = new PedidosAdapter(pedidos, enderecos);
         recyclerView.setAdapter(adapter);
         if (adapter.getItemCount() > 0) {
             strSemServico.setVisibility(View.GONE);
