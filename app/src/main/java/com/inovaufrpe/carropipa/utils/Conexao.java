@@ -170,6 +170,37 @@ public class Conexao {
         }
     }
 
+    public static String recuperaEnd(String urlLogin){
+        HttpURLConnection urlConnection;
+        BufferedReader reader;
+        try{
+            URL url = new URL(urlLogin);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.setAllowUserInteraction(false);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+            StringBuilder stringBuilder = new StringBuilder();
+
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                InputStreamReader streamReader = new InputStreamReader(urlConnection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(streamReader);
+                String response = null;
+                while((response = bufferedReader.readLine())!=null){
+                    stringBuilder.append(response+"\n");
+                }
+                bufferedReader.close();
+                return stringBuilder.toString();
+            } else {
+                Log.i("sucesso", stringBuilder.toString());
+                return stringBuilder.toString();
+            }
+        } catch (Exception e) {
+            Log.i("erro",e.toString());
+            return null;
+        }
+    }
+
     public static String localizacao(String urlLogin){
         HttpURLConnection urlConnection;
         BufferedReader reader;

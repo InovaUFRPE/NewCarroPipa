@@ -19,6 +19,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.inovaufrpe.carropipa.adapter.PedidosAdapter;
 import com.inovaufrpe.carropipa.model.Pedido;
 import com.inovaufrpe.carropipa.utils.Conexao;
@@ -122,7 +128,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
             }
             else{
                 //AQUI ELE PEGA O RETORNO DA REQUEST DOS PEDIDOS, MANDAR PRA LISTVIEW
-                Log.i("sucesso", result);
+                //Log.i("sucesso", result);
 
                 try {
                     JSONArray jsonArray = new JSONArray(result);
@@ -141,8 +147,9 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
             try {
                 JSONObject pedido = jsonArray.getJSONObject(i);
                 // pegar endereco com base no pedido.getString("checkIn")
+                String checkin = pedido.getString("checkIn");
 
-
+                new HomeCaminhoneiroActivity.RequestEndereco(checkin).execute();
                 list.add(new Pedido(
                         pedido.getInt("id_pedido"),
                         pedido.getInt("id_pessoa_cli"),
@@ -150,7 +157,7 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
                         pedido.getInt("dataHora"),
                         pedido.getDouble("valor"),
                         pedido.getDouble("valorFrete"),
-                        "",
+                        pedido.getString("checkIn"),
                         pedido.getBoolean("imediatoProgramado"),
                         pedido.getBoolean("confirmadoProgramado")
                         )
@@ -163,6 +170,30 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         }
         return list;
     }
+
+    private class RequestEndereco extends AsyncTask<Void, Void, String> {
+        String param;
+        public RequestEndereco(String param){
+            this.param = param;
+        }
+        @Override
+        protected String doInBackground(Void... voids) {
+            //botar a url de verificar os pedidos
+            String url = "https://nominatim.openstreetmap.org/reverse?format=json&"+ param +"&zoom=18&addressdetails=1";
+            Log.i("url",url);
+            return Conexao.recuperaEnd(url);
+        }
+        protected void onPostExecute(String result){
+            if (result.equals("NOT FOUND")){
+                Log.i("Erro: ","erro");
+            }
+            else{
+                Log.i("sucesso", result);
+            }
+        }
+    }
+
+
 
     private void initRecycler (ArrayList pedidos) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

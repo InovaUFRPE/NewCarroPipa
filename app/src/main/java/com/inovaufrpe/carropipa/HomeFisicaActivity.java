@@ -238,7 +238,11 @@ public class HomeFisicaActivity extends AppCompatActivity {
                 Location location = locationManager.getLastKnownLocation(bestProvider);
                 String latlong;
                 if (location != null){
+
+                    Log.i("lat", String.valueOf(location.getLatitude()));
+                    Log.i("lon", String.valueOf(location.getLongitude()));
                     latlong = "lat="+String.valueOf(location.getLatitude())+"&lon="+String.valueOf(location.getLongitude());
+
                 } else {
                     latlong = "null";
                 }
