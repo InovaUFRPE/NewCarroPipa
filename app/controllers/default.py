@@ -595,13 +595,16 @@ def pedidonaoaceito_get():
     peds = Pedido.query.filter(Pedido.id_pessoa_mot == 0).all()
     listaPedsNaoAceitos = []
     for g in peds:
-        # content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + g.checkIn).content
-        # my_json = content.decode('utf8')#.replace("'", '"')
-        # s = json.loads(my_json)
-        # print(s)
-        # print(s[0])
-        endereco = ''
-        # endereco = s['name'] + ' - ' + s['address']['suburb'] + ' - ' + s['address']['city'] + ' - ' + s['address']['state']
+        content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + g.checkIn).content
+        my_json = content.decode('utf8')#.replace("'", '"')
+        s = json.loads(my_json)
+
+        rua = (s['address']['road'] + ' - ') if s['name'] != None else ''
+        bairro = (s['address']['suburb'] + ' - ') if s['name'] != None else ''
+        cidade = (s['address']['city'] + ' - ') if s['name'] != None else ''
+        estado = s['address']['state'] if s['name'] != None else ''
+        endereco = rua + bairro + cidade + estado
+
         listaPedsNaoAceitos.append({"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete,"endereco": endereco})
     return listaPedsNaoAceitos
 
