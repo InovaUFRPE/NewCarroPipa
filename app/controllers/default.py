@@ -596,16 +596,16 @@ def pedidonaoaceito_get():
     listaPedsNaoAceitos = []
     for g in peds:
         
-        
+
         content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + g.checkIn).content
         my_json = content.decode('utf8')#.replace("'", '"')
         s = json.loads(my_json)
 
-        rua = (s['address']['road'] + ' - ') if s['name'] != None else ''
-        bairro = (s['address']['suburb'] + ' - ') if s['name'] != None else ''
-        cidade = (s['address']['city'] + ' - ') if s['name'] != None else ''
-        estado = s['address']['state'] if s['name'] != None else ''
-        endereco = rua + bairro + cidade + estado
+        # rua = (s['address']['road'] + ' - ') if s['name'] != None else ''
+        # bairro = (s['address']['suburb'] + ' - ') if s['name'] != None else ''
+        # cidade = (s['address']['city'] + ' - ') if s['name'] != None else ''
+        # estado = s['address']['state'] if s['name'] != None else ''
+        endereco = ""
 
         listaPedsNaoAceitos.append({"id_pedido": g.id_pedido,"id_pessoa_cli": g.id_pessoa_cli,"id_pessoa_mot": g.id_pessoa_mot,"valor": g.valor,"dataHora": g.dataHora,"checkIn": g.checkIn,"imediatoProgramado": g.imediatoProgramado,"confirmadoProgramado": g.confirmadoProgramado,"valorFrete": g.valorFrete,"endereco": endereco})
     return listaPedsNaoAceitos
