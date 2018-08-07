@@ -1,7 +1,9 @@
 package com.inovaufrpe.carropipa.adapter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +26,7 @@ public class PedidosListHolder extends RecyclerView.ViewHolder implements Adapte
     public TextView pedido;
     public TextView endereco;
     public TextView idPedido;
+    private View vw;
 
     public PedidosListHolder(final View itemView) {
         super(itemView);
@@ -36,9 +39,18 @@ public class PedidosListHolder extends RecyclerView.ViewHolder implements Adapte
 
             @Override
             public void onClick(View v) {
-                Sessao.idPedido = Integer.parseInt(idPedido.getText().toString());
-                Intent it = new Intent(itemView.getContext(), MapsActivity2.class);
-                v.getContext().startActivity(it);
+                
+
+                builder.setPositiveButton("Aceitar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Sessao.idPedido = Integer.parseInt(idPedido.getText().toString());
+                        Intent it = new Intent(itemView.getContext(), MapsActivity2.class);
+                        vw.getContext().startActivity(it);
+                    }
+                });
+                builder.create();
+                builder.show();
 
             }
         });
