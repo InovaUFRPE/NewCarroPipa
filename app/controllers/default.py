@@ -595,9 +595,9 @@ def pedidonaoaceito_get():
     peds = Pedido.query.filter(Pedido.id_pessoa_mot == 0).all()
     listaPedsNaoAceitos = []
     for g in peds:
-        end = g.checkIn.split(',')
-        if len(end) != 2:
-            end = [-8.01755033,-34.94428007]
+        # end = g.checkIn.split(',')
+        # if len(end) != 2:
+        end = [-8.01755033,-34.94428007]
         endCom = "lat=" + end[0] + "&lon="+ end[1]
         content = requests.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&' + endCom).content
         my_json = content.decode('utf8')#.replace("'", '"')
