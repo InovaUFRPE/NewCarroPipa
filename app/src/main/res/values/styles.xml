@@ -8,18 +8,30 @@
         <item name="colorAccent">@color/accent</item>
         <item name="android:fontFamily">@font/lato</item>
     </style>
+
     <style name="ButtonAccent">
         <item name="android:background">@drawable/radius_shape_accent</item>
         <item name="android:textColor">@color/clear</item>
     </style>
+
     <style name="ButtonPrimary">
         <item name="android:background">@drawable/radius_shape_primary</item>
         <item name="android:textColor">@color/clear</item>
     </style>
+
     <style name="Background30Opacity">
         <item name="android:background">@drawable/radius_shape_30opacity</item>
         <item name="android:textColor">@color/clear</item>
         <item name="android:padding">16dp</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
