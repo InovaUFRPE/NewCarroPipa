@@ -1,16 +1,14 @@
 package com.inovaufrpe.carropipa;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,15 +21,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.inovaufrpe.carropipa.utils.Conexao;
 import com.inovaufrpe.carropipa.utils.Sessao;
 
@@ -49,6 +42,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 public class HomeFisicaActivity extends AppCompatActivity {
@@ -230,18 +224,28 @@ public class HomeFisicaActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 checkPermission();
+                Location location = null;
                 locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                List<String> providers = locationManager.getProviders(new Criteria(),true);
+                if (providers!= null){
 
+                    for (String provider : providers){
+                        Location l = locationManager.getLastKnownLocation(provider);
+                        if(l != null){
+                            if (location == null || l.getTime() > location.getTime()){
+                                location = l;
+                            }
+                        }
 
-
-                String bestProvider = locationManager.getBestProvider(new Criteria(),true);
-                Location location = locationManager.getLastKnownLocation(bestProvider);
+                    }
+                }
                 String latlong;
+                location = null; //pra location entrar no defaut
                 if (location != null){
                     latlong = String.valueOf(location.getLatitude())+","+String.valueOf(location.getLongitude());
 
                 } else {
-                    latlong = "null";
+                    latlong = "-8.115209,-35.022845";
                 }
                 Log.i("latlong",latlong);
                 try {

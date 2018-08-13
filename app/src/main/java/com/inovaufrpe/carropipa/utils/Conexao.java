@@ -14,6 +14,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 
 /**
  * Created by Felipe on 26/11/2017.
@@ -197,6 +200,7 @@ public class Conexao {
                 BufferedReader bufferedReader = new BufferedReader(streamReader);
                 String response = null;
                 while((response = bufferedReader.readLine())!=null){
+
                     stringBuilder.append(response+"\n");
                 }
                 bufferedReader.close();
@@ -211,7 +215,7 @@ public class Conexao {
         }
     }
 
-    public static String recuperaEnd(String urlLogin){
+    public static String recuperaRota(String urlLogin){
         HttpURLConnection urlConnection;
         BufferedReader reader;
         try{
@@ -227,17 +231,21 @@ public class Conexao {
                 InputStreamReader streamReader = new InputStreamReader(urlConnection.getInputStream());
                 BufferedReader bufferedReader = new BufferedReader(streamReader);
                 String response = null;
+
                 while((response = bufferedReader.readLine())!=null){
-                    stringBuilder.append(response+"\n");
+                    stringBuilder.append(response);
                 }
-                bufferedReader.close();
-                return stringBuilder.toString();
+
+                JSONObject rota =  new JSONObject(stringBuilder.toString());
+                //String pontos = rota.getString("points");
+                return rota.toString();
+
             } else {
-                Log.i("sucesso", stringBuilder.toString());
-                return stringBuilder.toString();
+                Log.i("sucesso", String.valueOf(urlConnection.getResponseCode()));
+                return urlConnection.getResponseMessage();
             }
         } catch (Exception e) {
-            Log.i("erro",e.toString());
+            Log.i("ROTAe",e.toString());
             return null;
         }
     }
@@ -259,6 +267,7 @@ public class Conexao {
                 BufferedReader bufferedReader = new BufferedReader(streamReader);
                 String response = null;
                 while((response = bufferedReader.readLine())!=null){
+
                     stringBuilder.append(response+"\n");
                 }
                 bufferedReader.close();

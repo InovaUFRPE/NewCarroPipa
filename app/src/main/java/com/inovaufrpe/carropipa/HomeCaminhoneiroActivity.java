@@ -6,12 +6,8 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.app.ActivityCompat;
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,14 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.inovaufrpe.carropipa.adapter.PedidosAdapter;
 import com.inovaufrpe.carropipa.model.Pedido;
 import com.inovaufrpe.carropipa.utils.Conexao;
@@ -69,8 +58,8 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         }
 
         //inicia a Thread que fica verificando os pedidos
-        verificarPedidos = new ThreadVerificarPedidos();
-        verificarPedidos.start();
+        Sessao.verificarPedidos = new ThreadVerificarPedidos();
+        Sessao.verificarPedidos.start();
         ArrayList<Pedido> ar = new ArrayList<Pedido>();
         initRecycler(ar, ar);
     }
@@ -103,14 +92,6 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
                 requestPermissions(permissoes,1);
             }
         }
-        /*
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                String[] permissoes = {Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                requestPermissions(permissoes, 1);
-            }
-        }*/
     }
 
     @Override
@@ -118,7 +99,6 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 1: {
-                // Se a solicitação de permissão foi cancelada o array vem vazio.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     this.recreate();
 
@@ -183,13 +163,12 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
                 Log.i("Erro: ","erro");
             }
             else{
-                //AQUI ELE PEGA O RETORNO DA REQUEST DOS PEDIDOS, MANDAR PRA LISTVIEW
-                //Log.i("sucesso", result);
-
+                Log.i("retorno", result);
                 try {
                     JSONArray jsonArray = new JSONArray(result);
                     criaLista(jsonArray);
                 } catch (JSONException e) {
+                    Log.i("Erro",e.getMessage());
                     e.printStackTrace();
                 }
 
@@ -226,35 +205,8 @@ public class HomeCaminhoneiroActivity extends AppCompatActivity {
         initRecycler(list, listEnd);
     }
 
-    private class RequestEndereco extends AsyncTask<Void, Void, String> {
-        String param;
-        public RequestEndereco(String param){
-            this.param = param;
-        }
-        @Override
-        protected String doInBackground(Void... voids) {
-            String url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+param;
-            String result = Conexao.recuperaEnd(url);
-            return result;
-        }
 
-        protected void onPostExecute(String result){
-            if (result.equals("NOT FOUND")){
-                Log.i("Erro: ","erro");
-            }
-            else{
-                try {
-                    JSONObject json = new JSONObject(result);
-                    String lista = json.getString("results");
-                    JSONObject objeto = new JSONArray(lista).getJSONObject(0);
-                    String endereco = objeto.getString("formatted_address");
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
 
 

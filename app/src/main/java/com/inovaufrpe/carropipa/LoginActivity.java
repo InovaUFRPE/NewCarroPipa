@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 validar();
-                /*Intent it = new Intent(LoginActivity.this,MapsActivity.class);
+                /*Intent it = new Intent(LoginActivity.this,MapsActivity2.class);
                 finish();
                 startActivity(it);*/
             }

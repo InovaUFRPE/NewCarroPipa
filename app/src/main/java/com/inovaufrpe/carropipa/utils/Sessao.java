@@ -7,4 +7,5 @@ public abstract class Sessao {
     public static JSONObject cliente;
     public static JSONObject pedido;
     public static int idPedido;
+    public static Thread verificarPedidos;
 }
