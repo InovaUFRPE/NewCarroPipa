@@ -282,8 +282,17 @@ def cliente_get(id_pessoa):
         return {'sucesso':False, 'mensagem':'cliente não existe.'}
     h = Pessoa.query.get(str(g.id_pessoa))
     i = Usuario.query.get(h.id_usuario)
+    j = Pedido.query.filter(Pedido.id_pessoa_cli == id_pessoa).all()
+    valor = 0
+    litros = 0
+    total = 0
+    if len(j) > 0:
+        for pedido in j:
+            litros += pedido.valor*25/1000
+            valor += pedido.valor
+            total += 1
 
-    return {'sucesso':True,'mensagem':'cliente retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email}
+    return {'sucesso':True,'mensagem':'cliente retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email, 'litros': litros, 'total': total, 'valor': valor}
 
 @app.route("/clientes/<id_pessoa>",methods=['GET','DELETE'])
 @app.route("/clientes/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
@@ -496,8 +505,16 @@ def motorista_get(id_pessoa):
         return {'sucesso':False, 'mensagem':'motorista não existe.'}
     h = Pessoa.query.get(str(g.id_pessoa))
     i = Usuario.query.get(h.id_usuario)
-
-    return {'sucesso':True,'mensagem':'motorista retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email}
+    j = Pedido.query.filter(Pedido.id_pessoa_mot == id_pessoa).all()
+    valor = 0
+    litros = 0
+    total = 0
+    if len(j) > 0:
+        for pedido in j:
+            litros += pedido.valor*25/1000
+            valor += pedido.valor
+            total += 1
+    return {'sucesso':True,'mensagem':'motorista retornado com sucesso.','id_pessoa':g.id_pessoa,'cpfcnpj':h.cpfcnpj,'nomerazaosocial':h.nomerazaosocial,'email':i.email, 'valor': valor, 'total': total, 'litros': litros}
 
 @app.route("/motoristas/<id_pessoa>",methods=['GET','DELETE'])
 @app.route("/motoristas/", defaults={'id_pessoa': None}, methods=['POST','GET','DELETE','PUT'])
